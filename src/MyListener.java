@@ -23,13 +23,14 @@ import static com.jogamp.opengl.GL2ES1.GL_PERSPECTIVE_CORRECTION_HINT;
 
 public class MyListener implements GLEventListener {
 
-    private final IntBuffer ArrayName = GLBuffers.newDirectIntBuffer(2);//VAO的buffer
-    private final IntBuffer BufferName = GLBuffers.newDirectIntBuffer(2);//VBO的buffer
-    private final IntBuffer TextureName = GLBuffers.newDirectIntBuffer(2);//纹理的buffer
+    private final IntBuffer ArrayName = GLBuffers.newDirectIntBuffer(3);//VAO的buffer
+    private final IntBuffer BufferName = GLBuffers.newDirectIntBuffer(3);//VBO的buffer
+    private final IntBuffer TextureName = GLBuffers.newDirectIntBuffer(3);//纹理的buffer
 
     private Models.Model testModel=new Model(System.getProperty("user.dir") + "/src/stl/Twoman.stl");
     private float frontVers[]=new float[testModel.Ts.tris.size()*3*5];
     private float backVers[]=new float[testModel.Ts.tris.size()*3*5];
+    private float deleteVers[]=new float[testModel.Ts.tris.size()*3*5];
 
 
 
@@ -59,13 +60,13 @@ public class MyListener implements GLEventListener {
         //---------以下为自定义初始化代码-----------
         initFrontVers();
         initBackVers();
+        initDeleteVers();
         initBuffer(gl);
 
         initShader(gl);//初始化着色器
         initTexture(gl);//初始化纹理
         initMatrix(gl);
     }
-
 
 
 
@@ -90,6 +91,7 @@ public class MyListener implements GLEventListener {
             testModel.modelDelete();
             initFrontVers();
             initBackVers();
+            initDeleteVers();
             initBuffer(gl);
             startDelete=false;
         }
@@ -122,8 +124,11 @@ public class MyListener implements GLEventListener {
         gl.glBindVertexArray(ArrayName.get(1));
         gl.glDrawArrays(GL_TRIANGLES,0,testModel.Ts.tris.size()*3);
 
-
-
+        gl.glActiveTexture(GL_TEXTURE2);
+        gl.glBindTexture(GL_TEXTURE_2D,TextureName.get(2));
+        gl.glUniform1i(gl.glGetUniformLocation(program,"ourTexture"),2);
+        gl.glBindVertexArray(ArrayName.get(2));
+        gl.glDrawArrays(GL_TRIANGLES,0,testModel.deleteTs.tris.size()*3);
     }
 
     @Override
@@ -133,8 +138,8 @@ public class MyListener implements GLEventListener {
 
     private void initBuffer(GL3 gl) {
         //设置VAO和VBO
-        gl.glGenVertexArrays(2, ArrayName);
-        gl.glGenBuffers(2, BufferName);
+        gl.glGenVertexArrays(3, ArrayName);
+        gl.glGenBuffers(3, BufferName);
 
         gl.glBindVertexArray(ArrayName.get(0));
         FloatBuffer frontVertexBuffer = GLBuffers.newDirectFloatBuffer(frontVers);
@@ -164,6 +169,28 @@ public class MyListener implements GLEventListener {
         gl.glBufferData(GL.GL_ARRAY_BUFFER,
                 vertexBuffer.capacity() * Float.BYTES,
                 vertexBuffer, GL.GL_STATIC_DRAW);
+        gl.glEnableVertexAttribArray(0);//通道0读取顶点坐标
+        gl.glVertexAttribPointer(0, 3, GL_FLOAT, false, 5 * Float.BYTES, 0);
+        gl.glEnableVertexAttribArray(1);//通道1读取纹理坐标
+        gl.glVertexAttribPointer(1, 2, GL_FLOAT, false, 5 * Float.BYTES, 3*Float.BYTES);
+        /**
+         * 参数1，读取数据传入GPU的通道编号，可用0~15
+         * 参数2，每组数据包含的数据个数
+         * 参数3，数据类型（OPENGL预设类型）
+         * 参数4，是否标准化，默认false
+         * 参数5，步长
+         * 参数6，偏移量
+         **/
+        //解绑
+        gl.glBindVertexArray(0);
+        gl.glBindBuffer(GL2.GL_ARRAY_BUFFER, 0);
+
+        gl.glBindVertexArray(ArrayName.get(2));
+        FloatBuffer deleteBuffer = GLBuffers.newDirectFloatBuffer(deleteVers);
+        gl.glBindBuffer(GL.GL_ARRAY_BUFFER, BufferName.get(2));
+        gl.glBufferData(GL.GL_ARRAY_BUFFER,
+                deleteBuffer.capacity() * Float.BYTES,
+                deleteBuffer, GL.GL_STATIC_DRAW);
         gl.glEnableVertexAttribArray(0);//通道0读取顶点坐标
         gl.glVertexAttribPointer(0, 3, GL_FLOAT, false, 5 * Float.BYTES, 0);
         gl.glEnableVertexAttribArray(1);//通道1读取纹理坐标
@@ -249,9 +276,10 @@ public class MyListener implements GLEventListener {
 
     private void initTexture(GL3 gl) {
         try {
+            gl.glGenTextures(3,TextureName);//生成纹理
+
             TextureData data= TextureIO.newTextureData(GLProfile.getDefault(),new File(
                     System.getProperty("user.dir") + "/src/image/pink.jpg"),false,TextureIO.JPG);
-            gl.glGenTextures(2,TextureName);//生成纹理
             gl.glActiveTexture(GL_TEXTURE0);//开启0号通道
             gl.glBindTexture(GL_TEXTURE_2D,TextureName.get(0));//绑定
             gl.glPixelStorei(GL_UNPACK_ALIGNMENT,1);//解决图像宽度不能整除4带来的缓冲区不足的问题
@@ -287,6 +315,26 @@ public class MyListener implements GLEventListener {
                     data.getBuffer()
             );
             gl.glGenerateMipmap(GL_TEXTURE_2D);
+            data.destroy();//销毁data
+
+            data= TextureIO.newTextureData(GLProfile.getDefault(),new File(
+                    System.getProperty("user.dir") + "/src/image/temp1.jpg"),false,TextureIO.JPG);
+            gl.glActiveTexture(GL_TEXTURE2);
+            gl.glBindTexture(GL_TEXTURE_2D,TextureName.get(2));//绑定
+            gl.glPixelStorei(GL_UNPACK_ALIGNMENT,1);//解决图像宽度不能整除4带来的缓冲区不足的问题
+            gl.glTexImage2D(
+                    GL_TEXTURE_2D,
+                    0,
+                    data.getInternalFormat(),
+                    data.getWidth(),
+                    data.getHeight(),
+                    data.getBorder(),
+                    data.getPixelFormat(),
+                    data.getPixelType(),
+                    data.getBuffer()
+            );
+            gl.glGenerateMipmap(GL_TEXTURE_2D);
+            data.destroy();//销毁data
 
             gl.glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,GL_REPEAT);
             gl.glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,GL_REPEAT);
@@ -365,6 +413,36 @@ public class MyListener implements GLEventListener {
 
 
     }
+
+    private void initDeleteVers() {
+        ArrayList<Float> deleteV=new ArrayList<Float> ();
+        for(Tri tempT:testModel.deleteTs.tris.values()){
+            deleteV.add((float)((tempT.getV0().getX()-70)*0.05));
+            deleteV.add((float)((tempT.getV0().getY()-70)*0.05));
+            deleteV.add((float)((tempT.getV0().getZ()-70)*0.05));
+            deleteV.add(0.5f);
+            deleteV.add(1.0f);
+
+            deleteV.add((float)((tempT.getV1().getX()-70)*0.05));
+            deleteV.add((float)((tempT.getV1().getY()-70)*0.05));
+            deleteV.add((float)((tempT.getV1().getZ()-70)*0.05));
+            deleteV.add(1.0f);
+            deleteV.add(0.0f);
+
+            deleteV.add((float)((tempT.getV2().getX()-70)*0.05));
+            deleteV.add((float)((tempT.getV2().getY()-70)*0.05));
+            deleteV.add((float)((tempT.getV2().getZ()-70)*0.05));
+            deleteV.add(0.0f);
+            deleteV.add(0.0f);
+
+        }
+
+        for(int i=0;i<testModel.deleteTs.tris.size()*3*5;i++){
+            deleteVers[i]=deleteV.get(i);
+        }
+
+    }
+
 
     public Camera getCamera(){
         return camera;

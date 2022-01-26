@@ -12,6 +12,13 @@ import static sun.security.pkcs11.wrapper.Constants.*;
 
 public class Main {
     public static void main(String[] args) {
+
+        /**String nums="0";
+        int numi=0;
+        System.out.println(nums);
+        numi++;
+        nums=String.valueOf(numi);
+        System.out.println(nums);**/
         /**GLCanvas canvas=new GLCanvas();
          JFrame frame=new JFrame();
          frame.getContentPane().add(canvas);

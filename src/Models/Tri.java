@@ -17,6 +17,10 @@ public class Tri {
         setTag(v0.getT() + v1.getT() + v2.getT());
     }
 
+    public Tri(String tag) {
+        setTag(tag);
+    }
+
     public void addnearTs(Tri t) {
         this.nearTs.tris.put(t.getTag(), t);
     }
