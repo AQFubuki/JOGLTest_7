@@ -144,7 +144,8 @@ public class Model {
             for (Tri tempT : deleteTs.tris.values()) {//遍历待删除的面集合，把他们相邻的面添加到新的删除面集合中
                 if (!tempT.nearTs.tris.isEmpty()) {
                     for (Tri tempT1 : tempT.nearTs.tris.values()) {
-                        if (!newDeleteTs.tris.containsKey(tempT1.tag) && !deleteTs.tris.containsKey(tempT1.tag)) {
+                        if (!newDeleteTs.tris.containsKey(tempT1.tag) && !deleteTs.tris.containsKey(tempT1.tag)
+                        && Ts.tris.containsKey(tempT1.tag)) {
                             newDeleteTs.tris.put(tempT1.tag, tempT1);
                         }
                     }
