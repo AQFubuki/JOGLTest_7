@@ -21,8 +21,6 @@ public class Model {
             int vertexNum = 3;//记录当前三角面点的序号,大于2表示当前字符串不是点的坐标信息
             String temp = ""; //存放当前正在读取的字符串
             Vertex v0 = new Vertex(), v1 = new Vertex(), v2 = new Vertex();
-            Edge e0 = new Edge(), e1 = new Edge(), e2 = new Edge();
-            Tri tri;
             while ((tempchar = reader.read()) != -1) { //判断是否读到文件末尾
                 if (((char) tempchar) != '\r' && (char) tempchar != '\n') {
                     temp = temp + (char) tempchar;
@@ -47,82 +45,7 @@ public class Model {
                         } else if (vertexNum == 2) {
                             v2 = tempVertex;
                             //读完v2点开始创建三角面
-                            tri = new Tri(v0, v1, v2);
-                            //将三个点的面集加入到tri的邻近面集中
-                            tri.addnearTs(v0.getnearTs());
-                            tri.addnearTs(v1.getnearTs());
-                            tri.addnearTs(v2.getnearTs());
-
-                            //将tri加入到v0 v1 v2的邻近面集中，同时更新邻近面集中面的邻近面集
-                            v0.addnearTs(tri);
-                            v1.addnearTs(tri);
-                            v2.addnearTs(tri);
-
-                            String triTag = v0.getT() + v1.getT() + v2.getT();
-                            Ts.tris.put(triTag, tri);
-                            //创建边v0->v1 v1->v2 v2->v0
-
-                            e0 = Es.edges.getOrDefault(v1.getT() + v0.getT(), new Edge(v0, v1));
-                            tri.setE0(e0);
-                            if (e0.getTag().equals(v0.getT() + v1.getT())) { //正序的设置 v0->v1
-                                Es.edges.put(e0.getTag(), e0);//初次创建，加入边的集合
-                                e0.setTri(tri);
-                                tri.setD0(true);
-
-                                v0.addnearVs(v1);//v0和v1互相加入对方的邻近点集中
-                                v1.addnearVs(v0);
-
-                                v0.addnearEs(e0);//将e0加入到v1和v0的邻近边集中 在add中同时更新边与边的邻近集合
-                                v1.addnearEs(e0);
-
-                            } else { //逆序的设置 v1->v0
-                                e0.setAdjTri(tri);
-                                tri.setD0(false);
-                                //tri.addnearTs(e0.getTri());//有逆序时将e0的两个三角面互相加入对方的邻近面集中
-                                e0.getTri().addnearTs(tri);
-                            }
-
-                            e1 = Es.edges.getOrDefault(v2.getT() + v1.getT(), new Edge(v1, v2));
-                            tri.setE1(e1);
-                            if (e1.getTag().equals(v1.getT() + v2.getT())) {
-                                Es.edges.put(e1.getTag(), e1);
-                                e1.setTri(tri);
-                                tri.setD1(true);
-
-                                v1.addnearVs(v2);
-                                v2.addnearVs(v1);
-
-                                v1.addnearEs(e1);
-                                v2.addnearEs(e1);
-
-                            } else {
-                                e1.setAdjTri(tri);
-                                tri.setD1(false);
-
-                                //tri.addnearTs(e1.getTri());
-                                e1.getTri().addnearTs(tri);
-                            }
-
-                            e2 = Es.edges.getOrDefault(v0.getT() + v2.getT(), new Edge(v2, v0));
-                            tri.setE2(e2);
-                            if (e2.getTag().equals(v2.getT() + v0.getT())) {
-                                Es.edges.put(e2.getTag(), e2);
-                                e2.setTri(tri);
-                                tri.setD2(true);
-
-                                v2.addnearVs(v0);
-                                v0.addnearVs(v2);
-
-                                v2.addnearEs(e2);
-                                v0.addnearEs(e2);
-
-                            } else {
-                                e2.setAdjTri(tri);
-                                tri.setD2(false);
-
-                                //tri.addnearTs(e2.getTri());
-                                e2.getTri().addnearTs(tri);
-                            }
+                            CreateTri(v0,v1,v2);
                         }
                         vertexNum++;
                     }
@@ -134,6 +57,57 @@ public class Model {
             e.printStackTrace();
         }
 
+    }
+
+    public void CreateTri(Vertex v0,Vertex v1,Vertex v2){
+        //点与点 点与边 点与面 边与边 边与面 面与面
+
+        //三个点互相加入邻近点集中 点与点
+        v0.addnearVs(v1);
+        v0.addnearVs(v2);
+        v1.addnearVs(v0);
+        v1.addnearVs(v2);
+        v2.addnearVs(v0);
+        v2.addnearVs(v1);
+
+        Tri tri = new Tri(v0, v1, v2);
+        //将三个点的面集加入到tri的邻近面集中 点与面
+        tri.addnearTs(v0.getnearTs());
+        tri.addnearTs(v1.getnearTs());
+        tri.addnearTs(v2.getnearTs());
+        //将tri加入到v0 v1 v2的邻近面集中，同时更新邻近面集中面的邻近面集
+        v0.addnearTs(tri);
+        v1.addnearTs(tri);
+        v2.addnearTs(tri);
+
+        //创建边v0->v1 v1->v2 v2->v0
+        CreateEdge(v0,v1,tri,0);
+        CreateEdge(v1,v2,tri,1);
+        CreateEdge(v2,v0,tri,2);
+
+        //将创建好的面添加进面集合中
+        String triTag = v0.getT() + v1.getT() + v2.getT();
+        Ts.tris.put(triTag, tri);
+    }
+
+    private void CreateEdge(Vertex v0, Vertex v1,Tri tri,int num) {
+        Edge e=new Edge();
+        e = Es.edges.getOrDefault(v1.getT() + v0.getT(), new Edge(v0, v1));
+
+        if (e.getTag().equals(v0.getT() + v1.getT())) { //正序的设置 v0->v1
+            Es.edges.put(e.getTag(), e);//初次创建，加入边的集合
+            e.setTri(tri);
+            tri.setD(true,num);
+            v0.addnearEs(e);//点与边 将e0加入到v1和v0的邻近边集中 在add中同时更新边与边的邻近集合
+            v1.addnearEs(e);
+
+        } else { //逆序的设置 v1->v0
+            e.setAdjTri(tri);
+            tri.setD(false,num);
+            tri.addnearTs(e.getTri());//有逆序时将e0的两个三角面互相加入对方的邻近面集中
+            e.getTri().addnearTs(tri); //面与面
+        }
+        tri.setE(e,num);
     }
 
     public void modelDelete(){

@@ -93,6 +93,16 @@ public class Tri {
         this.e[2] = e2;
     }
 
+    public void setE(Edge e,int num){
+        if(num==0){
+            this.setE0(e);
+        }else if(num==1){
+            this.setE1(e);
+        }else if(num==2){
+            this.setE2(e);
+        }else{return;}
+    }
+
     public boolean getD0() {
         return d[0];
     }
@@ -115,5 +125,15 @@ public class Tri {
 
     public void setD2(boolean d2) {
         this.d[2] = d2;
+    }
+
+    public void setD(boolean b,int num){
+        if(num==0){
+            this.setD0(b);
+        }else if(num==1){
+            this.setD1(b);
+        }else if(num==2){
+            this.setD2(b);
+        }else{return;}
     }
 }
