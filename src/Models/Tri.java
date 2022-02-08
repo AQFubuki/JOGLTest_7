@@ -100,7 +100,7 @@ public class Tri {
             this.setE1(e);
         }else if(num==2){
             this.setE2(e);
-        }else{return;}
+        }
     }
 
     public boolean getD0() {
@@ -134,6 +134,6 @@ public class Tri {
             this.setD1(b);
         }else if(num==2){
             this.setD2(b);
-        }else{return;}
+        }
     }
 }
