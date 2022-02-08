@@ -21,6 +21,7 @@ public class Vertex {
         this.tag = tag;
     }
 
+    public Vertex(String tag,boolean t){this.setT(tag);}
     public Vertex(String tag) {
         this.set(tag);
     }
@@ -51,7 +52,8 @@ public class Vertex {
     public void addnearTs(Tri t) {
         this.nearTs.tris.put(t.getTag(), t);
         for(Tri tempT:this.nearTs.tris.values()){
-            tempT.addnearTs(t);
+            if(!t.isEquals(tempT)){
+            tempT.addnearTs(t);}
         }
     }
 
@@ -142,5 +144,18 @@ public class Vertex {
         dMun = Double.parseDouble(sNum);
         this.setZ(dMun);
 
+    }
+
+    public void printnearTris(){
+        nearTs.printTag();
+    }
+    public void printnearEdges(){
+        nearEs.print();
+    }
+    public void printnearVertexs(){
+        nearVs.printTag();
+    }
+    public void printTag() {
+        System.out.println(this.getT());
     }
 }

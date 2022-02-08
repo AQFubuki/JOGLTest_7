@@ -60,8 +60,9 @@ public class Model {
     }
 
     public void CreateTri(Vertex v0,Vertex v1,Vertex v2){
-        //点与点 点与边 点与面 边与边 边与面 面与面
-
+        Vs.vertexs.put(v0.getT(),v0);
+        Vs.vertexs.put(v1.getT(),v1);
+        Vs.vertexs.put(v2.getT(),v2);
         //三个点互相加入邻近点集中 点与点
         v0.addnearVs(v1);
         v0.addnearVs(v2);
@@ -75,6 +76,7 @@ public class Model {
         tri.addnearTs(v0.getnearTs());
         tri.addnearTs(v1.getnearTs());
         tri.addnearTs(v2.getnearTs());
+
         //将tri加入到v0 v1 v2的邻近面集中，同时更新邻近面集中面的邻近面集
         v0.addnearTs(tri);
         v1.addnearTs(tri);
@@ -104,8 +106,8 @@ public class Model {
         } else { //逆序的设置 v1->v0
             e.setAdjTri(tri);
             tri.setD(false,num);
-            tri.addnearTs(e.getTri());//有逆序时将e0的两个三角面互相加入对方的邻近面集中
-            e.getTri().addnearTs(tri); //面与面
+            //tri.addnearTs(e.getTri());//有逆序时将e0的两个三角面互相加入对方的邻近面集中
+            //e.getTri().addnearTs(tri); //面与面
         }
         tri.setE(e,num);
     }
@@ -239,5 +241,19 @@ public class Model {
         for(String tag:deleteTs.tris.keySet()){
             System.out.println(tag+" ");//+deleteTs.tris.getOrDefault(tag,new Tri("no tri")).getTag());
         }
+    }
+
+    public void printTris(){
+        Ts.print();
+    }
+    public void printNearTris(){
+        Ts.printNearTris();
+    }
+    public void printEdgesnearEdges(){
+        Es.printnearEdges();
+    }
+    public void printVsnear(){
+        Vs.printTag();
+        Vs.print();
     }
 }

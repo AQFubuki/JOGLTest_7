@@ -88,4 +88,20 @@ public class Edge {
     public void setTag(String tag) {
         this.tag = tag;
     }
+
+    public void printTag(){
+        System.out.println(this.getTag());
+    }
+
+    public void print(){
+        System.out.println("EdgeTag:");
+        this.printTag();
+        System.out.println("sv:"+sv.getT());
+        System.out.println("ev:"+ev.getT());
+        System.out.println("Tri:"+Tri.getTag());
+        System.out.println("adjTri:"+adjTri.getTag());
+        System.out.println("nearEdges:");
+        nearEs.print();
+
+    }
 }

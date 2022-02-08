@@ -136,4 +136,31 @@ public class Tri {
             this.setD2(b);
         }
     }
+
+    public void print(){
+        System.out.println("TriTag:");
+        System.out.println(this.getTag());
+        System.out.println("EdgeTag:");
+        System.out.println(this.getE0().getTag()+" "+this.getD0()
+        +"  "+this.getE1().getTag()+" "+this.getD1()
+        +"  "+this.getE2().getTag()+" "+this.getD2());
+        System.out.println("VertexTag:");
+        System.out.println(this.getV0().getT()+" "+
+        this.getV1().getT()+" "+
+        this.getV2().getT());
+    }
+
+    public void printnearTris(){
+        System.out.println("TriTag:"+this.getTag());
+        System.out.println("nearTris:");
+        nearTs.printTag();
+        System.out.println();
+
+    }
+
+    public boolean isEquals(Tri tempT) {
+        if(this.getTag().equals(tempT.getTag())){
+            return true;
+        }else{return false;}
+    }
 }
