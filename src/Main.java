@@ -27,7 +27,9 @@ public class Main {
          FPSAnimator animator=new FPSAnimator(canvas,60,true);
          **/
 
-         //运行GUI代码在事件分发线程以保证线程安全
+
+
+        //运行GUI代码在事件分发线程以保证线程安全
         SwingUtilities.invokeLater(() -> {
             //创建OpenGL渲染画布
             GLCanvas canvas = new GLCanvas();

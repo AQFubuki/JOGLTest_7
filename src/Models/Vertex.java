@@ -27,14 +27,11 @@ public class Vertex {
     }
 
     public boolean isEquals(Vertex vertex) {
-        if (this.tag.equals(vertex.getT())) {
-            return true;
-        }
-        return false;
+        return this.isEquals(vertex.getT());
     }
 
     public boolean isEquals(String tag) {
-        if (this.tag.equals(tag)) {
+        if (this.getT().equals(tag)) {
             return true;
         }
         return false;
@@ -150,7 +147,7 @@ public class Vertex {
         nearTs.printTag();
     }
     public void printnearEdges(){
-        nearEs.print();
+        nearEs.printTag();
     }
     public void printnearVertexs(){
         nearVs.printTag();
@@ -158,4 +155,5 @@ public class Vertex {
     public void printTag() {
         System.out.println(this.getT());
     }
+
 }

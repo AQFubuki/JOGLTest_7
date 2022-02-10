@@ -3,8 +3,8 @@ package Models;
 public class Edge {
     protected Vertex sv = new Vertex();
     protected Vertex ev = new Vertex();
-    protected Tri Tri = new Tri();
-    protected Tri adjTri = new Tri();
+    protected Tri Tri =null;
+    protected Tri adjTri =null;
     protected String tag;
     //protected Vertexs nearVs = new Vertexs();
     protected Edges nearEs = new Edges();
@@ -98,10 +98,15 @@ public class Edge {
         this.printTag();
         System.out.println("sv:"+sv.getT());
         System.out.println("ev:"+ev.getT());
-        System.out.println("Tri:"+Tri.getTag());
-        System.out.println("adjTri:"+adjTri.getTag());
+        if(Tri!=null){
+            System.out.println("Tri:"+Tri.getTag());
+        }else{System.out.println("Tri:null");}
+
+        if(adjTri!=null){
+            System.out.println("adjTri:"+adjTri.getTag());
+        }else{System.out.println("adjTri:null");}
         System.out.println("nearEdges:");
-        nearEs.print();
+        nearEs.printTag();
 
     }
 }

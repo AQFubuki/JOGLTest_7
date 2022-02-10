@@ -1,6 +1,9 @@
 package Models;
 
 import java.io.*;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 public class Model {
     public Vertexs Vs = new Vertexs();
@@ -141,52 +144,101 @@ public class Model {
         printDeleteTs();
     }
 
+    public void modelDelete(String tag){
+        for(Tri t:this.Ts.tris.values()){
+            if(t.getTag().equals(tag)){
+                modelDelete(t);
+                break;
+            }
+        }
+
+    }
+
     public void modelDelete(Tri t){
         //首先把t从t的邻近面关系中删除
         for(Tri tempNearT:t.nearTs.tris.values()){
-            //tempNearT.nearTs.tris.remove(t.tag);
-            tempNearT.nearTs.tris.entrySet().remove(t);
-        }
-        //再删除面和边的关系
-        if(t.getD0()){
-            t.getE0().setTri(new Tri());
-        }else{
-            t.getE0().setAdjTri(new Tri());
-        }
-        if(t.getD1()){
-            t.getE1().setTri(new Tri());
-        }else{
-            t.getE1().setAdjTri(new Tri());
-        }
-        if(t.getD2()){
-            t.getE2().setTri(new Tri());
-        }else{
-            t.getE2().setAdjTri(new Tri());
+            tempNearT.nearTs.tris.remove(t.tag);
+            //tempNearT.nearTs.tris.entrySet().remove(t);
         }
 
+        //再删除面和边的关系
+        modelEdgeDeleteTri(t,0);
+        modelEdgeDeleteTri(t,1);
+        modelEdgeDeleteTri(t,2);
+
+
         //将面从点的邻近面集中删除
-        t.getV0().nearTs.tris.remove(t);
+        t.getV0().nearTs.tris.remove(t.tag);
         if(t.getV0().nearTs.tris.isEmpty()){//如果该点不存在任何一个面时，将其删除
             modelDeleteVertex(t.getV0());
         }
 
-        t.getV1().nearTs.tris.remove(t);
+        t.getV1().nearTs.tris.remove(t.tag);
         if(t.getV1().nearTs.tris.isEmpty()){//如果该点不存在任何一个面时，将其删除
             modelDeleteVertex(t.getV1());
         }
 
-        t.getV2().nearTs.tris.remove(t);
+        t.getV2().nearTs.tris.remove(t.tag);
         if(t.getV2().nearTs.tris.isEmpty()){//如果该点不存在任何一个面时，将其删除
             modelDeleteVertex(t.getV2());
         }
         Ts.tris.remove(t.tag);
     }
+    private void modelEdgeDeleteTri(Tri t, int i) {
+        if(i==0){modelE0DeleteTri(t);}
+        else if(i==1){modelE1DeleteTri(t);}
+        else if(i==2){modelE2DeleteTri(t);}
+    }
+    private void modelE0DeleteTri(Tri t) {
+        if(t.getD0()){
+            t.getE0().setTri(null);
+        }else{
+            t.getE0().setAdjTri(null);
+        }
+        if(t.getE0().Tri==null && t.getE0().adjTri==null){
+            modelSEDeleteEdge(t.getE0());
+        }
+    }
+    private void modelE1DeleteTri(Tri t) {
+        if(t.getD1()){
+            t.getE1().setTri(null);
+        }else{
+            t.getE1().setAdjTri(null);
+        }
+        if(t.getE1().Tri==null && t.getE1().adjTri==null){
+            modelSEDeleteEdge(t.getE1());
+        }
+    }
+    private void modelE2DeleteTri(Tri t) {
+        if(t.getD2()){
+            t.getE2().setTri(null);
+        }else{
+            t.getE2().setAdjTri(null);
+        }
+        if(t.getE2().Tri==null && t.getE2().adjTri==null){
+            modelSEDeleteEdge(t.getE2());
+        }
+    }
 
     private void modelDeleteVertex(Vertex v) {
         //首先删除边
-        for(Edge tempE:v.nearEs.edges.values()){
-            modelDeleteEdge(tempE);
+        for(Iterator<Map.Entry<String,Edge>>it=v.nearEs.edges.entrySet().iterator();
+        it.hasNext();){
+            Map.Entry<String,Edge>item= it.next();
+            Edge tempE= item.getValue();
+            if(v.isEquals(tempE.getEv())){
+                modelEvDeleteEdge(tempE);
+            }else if(v.isEquals(tempE.getSv())){
+                modelSvDeleteEdge(tempE);
+            }else{
+                System.out.println("ERROR:modelDeleteVertex");
+            }
+            //modelDeleteEdge(tempE);
+            it.remove();
         }
+        //for(Edge tempE:v.nearEs.edges.values()){
+        //    modelDeleteEdge(tempE);
+        //}
         //删除邻近点关系
         for(Vertex tempV:v.nearVs.vertexs.values()){
             tempV.nearVs.vertexs.remove(v.tag);
@@ -195,16 +247,38 @@ public class Model {
         this.Vs.vertexs.remove(v.tag);
     }
 
+    private void modelSvDeleteEdge(Edge e){
+        e.getEv().nearEs.edges.remove(e.tag);
+        modelDeleteEdge(e);
+    }
+
+    private void modelEvDeleteEdge(Edge e){
+        e.getSv().nearEs.edges.remove(e.tag);
+        modelDeleteEdge(e);
+    }
+
+    private void modelSEDeleteEdge(Edge e){
+        e.getSv().nearEs.edges.remove(e.tag);
+        e.getEv().nearEs.edges.remove(e.tag);
+        modelDeleteEdge(e);
+    }
+
     private void modelDeleteEdge(Edge e) {
         //删除边和点的关系
-        e.getEv().nearEs.edges.remove(e.tag);
-        e.getSv().nearEs.edges.remove(e.tag);
+        //e.getEv().nearEs.edges.remove(e.tag);
+        //e.getSv().nearEs.edges.remove(e.tag);
+
+        //解除两点之间的关系
+        System.out.println("SV:"+e.getSv().getT());
+        System.out.println("EV:"+e.getEv().getT());
+        e.getEv().nearVs.vertexs.remove(e.getSv().getT());
+        e.getSv().nearVs.vertexs.remove(e.getEv().getT());
         //删除邻近边关系
         for(Edge tempE:e.getEv().nearEs.edges.values()){
-            tempE.nearEs.edges.remove(e);
+            tempE.nearEs.edges.remove(e.getTag());
         }
         for(Edge tempE:e.getSv().nearEs.edges.values()){
-            tempE.nearEs.edges.remove(e);
+            tempE.nearEs.edges.remove(e.getTag());
         }
         this.Es.edges.remove(e.tag);//从边集中删除
     }

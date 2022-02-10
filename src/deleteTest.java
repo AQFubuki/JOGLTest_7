@@ -16,6 +16,12 @@ public class deleteTest {
         testM.CreateTri(A,C,F);
         testM.CreateTri(C,B,D);
 
-        testM.printVsnear();
+        testM.modelDelete("ABC");
+        //testM.printVsnear();
+        System.out.println("----------");
+        testM.modelDelete("ACF");
+        System.out.println("----------");
+        testM.modelDelete("CBD");
+        testM.printEdgesnearEdges();
     }
 }
