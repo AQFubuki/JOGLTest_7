@@ -13,7 +13,7 @@ import static sun.security.pkcs11.wrapper.Constants.*;
 public class Main {
     public static void main(String[] args) {
 
-        //new deleteTest().deleteTest();
+        new deleteTest().deleteTest();
         /**String nums="0";
         int numi=0;
         System.out.println(nums);
@@ -27,8 +27,7 @@ public class Main {
          FPSAnimator animator=new FPSAnimator(canvas,60,true);
          **/
 
-
-
+/**
         //运行GUI代码在事件分发线程以保证线程安全
         SwingUtilities.invokeLater(() -> {
             //创建OpenGL渲染画布
@@ -83,10 +82,8 @@ public class Main {
                             lastY = e.getY();
                             isFirstMouse = false;
                         }
-                        float deltaX = 0;
-                        deltaX = e.getX() - lastX;
-                        float deltaY = 0;
-                        deltaY = e.getY() - lastY;
+                        float deltaX= e.getX() - lastX;
+                        float deltaY= e.getY() - lastY;
                         if(deltaX>=20 || deltaX<=-20)deltaX=0;
                         if(deltaY>=20 || deltaY<=-20)deltaY=0;
 
@@ -114,6 +111,6 @@ public class Main {
             frame.pack();
             frame.setVisible(true);
             animator.start();//开始动画循环
-        });
+        });**/
     }
 }

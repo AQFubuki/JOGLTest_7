@@ -9,19 +9,62 @@ public class deleteTest {
         Vertex D=new Vertex("D",true);
         Vertex E=new Vertex("E",true);
         Vertex F=new Vertex("F",true);
+        Vertex G=new Vertex("G",true);
+        Vertex H=new Vertex("H",true);
+        Vertex I=new Vertex("I",true);
+        Vertex J=new Vertex("J",true);
+        Vertex K=new Vertex("K",true);
+        Vertex L=new Vertex("L",true);
+        Vertex M=new Vertex("M",true);
+        Vertex N=new Vertex("N",true);
+
         Model testM=new Model();
         testM.CreateTri(A,B,C);
-        testM.CreateTri(B,A,E);
-        testM.CreateTri(A,F,E);
-        testM.CreateTri(A,C,F);
-        testM.CreateTri(C,B,D);
+        testM.CreateTri(A,C,D);
+        testM.CreateTri(C,B,E);
+        testM.CreateTri(G,B,F);
+        testM.CreateTri(G,E,B);
+        testM.CreateTri(E,G,H);
+        testM.CreateTri(H,C,E);
+        testM.CreateTri(K,C,H);
+        testM.CreateTri(D,C,K);
+        testM.CreateTri(G,F,I);
+        testM.CreateTri(G,I,J);
+        testM.CreateTri(G,J,H);
+        testM.CreateTri(H,J,K);
+        testM.CreateTri(I,F,L);
+        testM.CreateTri(I,L,J);
+        testM.CreateTri(M,J,L);
+        testM.CreateTri(K,J,M);
+        testM.CreateTri(M,L,N);
 
-        testM.modelDelete("ABC");
-        //testM.printVsnear();
-        System.out.println("----------");
-        testM.modelDelete("ACF");
-        System.out.println("----------");
-        testM.modelDelete("CBD");
-        testM.printEdgesnearEdges();
+        testM.deleteTs.tris.put("ABC",
+                testM.Ts.tris.get("ABC"));
+        testM.printDeleteTs();
+        System.out.println("-------");
+       // testM.sortDeleteTs();
+        //testM.printDeleteTs();
+        System.out.println("----------------");
+        testM.modelDelete();
+        testM.printDeleteTs();
+        System.out.println("-------");
+        //testM.sortDeleteTs();
+        //testM.printDeleteTs();
+        System.out.println("----------------");
+        testM.modelDelete();
+        testM.printDeleteTs();
+        System.out.println("-------");
+        //testM.sortDeleteTs();
+        //testM.printDeleteTs();
+        System.out.println("----------------");
+        testM.modelDelete();
+        testM.printDeleteTs();
+        System.out.println("-------");
+        //testM.sortDeleteTs();
+        //testM.printDeleteTs();
+        System.out.println("----------------");
+
+
+
     }
 }
