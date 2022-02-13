@@ -11,6 +11,7 @@ public class Model {
     public Tris Ts = new Tris();
 
     public Tris deleteTs = new Tris();
+    public Tris sortDeleteTs=new Tris();
 
     public Model() {
     }
@@ -109,6 +110,9 @@ public class Model {
         } else { //逆序的设置 v1->v0
             e.setAdjTri(tri);
             tri.setD(false, num);
+            //设置公共边
+            tri.addhasCommonBorder(e.getTri());
+            e.getTri().addhasCommonBorder(tri);
             //tri.addnearTs(e.getTri());//有逆序时将e0的两个三角面互相加入对方的邻近面集中
             //e.getTri().addnearTs(tri); //面与面
         }
@@ -121,8 +125,8 @@ public class Model {
         Tris newDeleteTs = new Tris();
         if (!deleteTs.tris.values().isEmpty()) {
             for (Tri tempT : deleteTs.tris.values()) {//遍历待删除的面集合，把他们相邻的面添加到新的删除面集合中
-                if (!tempT.nearTs.tris.isEmpty()) {
-                    for (Tri tempT1 : tempT.nearTs.tris.values()) {
+                if (!tempT.hasCommonPoint.tris.isEmpty()) {
+                    for (Tri tempT1 : tempT.hasCommonPoint.tris.values()) {
                         if (!newDeleteTs.tris.containsKey(tempT1.tag)
                                 && !deleteTs.tris.containsKey(tempT1.tag)) {
                             newDeleteTs.tris.put(tempT1.tag, tempT1);
@@ -136,12 +140,19 @@ public class Model {
         }
         deleteTs.tris.clear();
         deleteTs.tris.putAll(newDeleteTs.tris);
+        sortDeleteTs.sort(deleteTs);
 
         //System.out.println("O:");
         //printDeleteTs();
         //sortDeleteTs();
         //System.out.println("sort:");
         //printDeleteTs();
+    }
+
+    public void addDeleteTs(Tri tri){
+        this.deleteTs.tris.put(tri.getTag(), tri);
+        sortDeleteTs.sort(deleteTs);
+
     }
 
     public void modelDelete(String tag) {
@@ -156,8 +167,8 @@ public class Model {
 
     public void modelDelete(Tri t) {
         //首先把t从t的邻近面关系中删除
-        for (Tri tempNearT : t.nearTs.tris.values()) {
-            tempNearT.nearTs.tris.remove(t.tag);
+        for (Tri tempNearT : t.hasCommonPoint.tris.values()) {
+            tempNearT.hasCommonPoint.tris.remove(t.tag);
             //tempNearT.nearTs.tris.entrySet().remove(t);
         }
 
@@ -291,17 +302,20 @@ public class Model {
         this.Es.edges.remove(e.tag);//从边集中删除
     }
 
-    public void sortDeleteTs() {
+    /**public void sortDeleteTs() {
         Tri targetT = new Tri();
         Tris newDeleteTs = new Tris();
         int num = 0;
         boolean isNear = false;
+        int size=deleteTs.tris.size();
         targetT = deleteTs.tris.entrySet().iterator().next().getValue();
         newDeleteTs.tris.put(String.valueOf(num++), targetT);
         deleteTs.tris.remove(targetT.getTag());
 
-        while (num > 0 && num < deleteTs.tris.size()) {
-            for (Tri tempT : targetT.nearTs.tris.values()) {
+
+        while (num > 0 && num < size) {
+            //deleteTs.tris.size()会逐渐减少
+            for (Tri tempT : targetT.hasCommonPoint.tris.values()) {
                 if (deleteTs.tris.containsKey(tempT.getTag())) {
                     targetT = tempT;
                     isNear = true;
@@ -317,11 +331,15 @@ public class Model {
             }
         }
         deleteTs.tris.putAll(newDeleteTs.tris);
-    }
+    }**/
 
     public void printDeleteTs() {
         for (String tag : deleteTs.tris.keySet()) {
             System.out.println(tag + " "+deleteTs.tris.getOrDefault(tag,new Tri("no tri")).getTag());
+        }
+        System.out.println("//////////////");
+        for (String tag : sortDeleteTs.tris.keySet()) {
+            System.out.println(tag + " "+sortDeleteTs.tris.getOrDefault(tag,new Tri("no tri")).getTag());
         }
     }
 

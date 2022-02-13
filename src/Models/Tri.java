@@ -5,7 +5,8 @@ public class Tri {
     protected Edge[] e = new Edge[3];
     protected boolean[] d = new boolean[3];
     protected String tag;
-    protected Tris nearTs = new Tris();
+    protected Tris hasCommonPoint = new Tris();
+    protected Tris hasCommonBorder=new Tris();
 
     public Tri() {
     }
@@ -22,7 +23,7 @@ public class Tri {
     }
 
     public void addnearTs(Tri t) {
-        this.nearTs.tris.put(t.getTag(), t);
+        this.hasCommonPoint.tris.put(t.getTag(), t);
     }
 
     public void addnearTs(Tris t) {
@@ -31,8 +32,12 @@ public class Tri {
         }
     }
 
+    public void addhasCommonBorder(Tri tri){
+        this.hasCommonBorder.tris.put(tri.getTag(),tri);
+    }
+
     public void shownearTs(){
-        for(Tri t:nearTs.tris.values()){
+        for(Tri t:hasCommonPoint.tris.values()){
             System.out.println(t.getTag());
         }
     }
@@ -153,7 +158,7 @@ public class Tri {
     public void printnearTris(){
         System.out.println("TriTag:"+this.getTag());
         System.out.println("nearTris:");
-        nearTs.printTag();
+        hasCommonPoint.printTag();
         System.out.println();
 
     }

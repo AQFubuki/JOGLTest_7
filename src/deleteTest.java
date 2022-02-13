@@ -1,4 +1,5 @@
 import Models.Model;
+import Models.Tri;
 import Models.Vertex;
 
 public class deleteTest {
@@ -38,31 +39,20 @@ public class deleteTest {
         testM.CreateTri(K,J,M);
         testM.CreateTri(M,L,N);
 
-        testM.deleteTs.tris.put("ABC",
-                testM.Ts.tris.get("ABC"));
+        testM.addDeleteTs(testM.Ts.tris.getOrDefault("ABC",new Tri("no add delete tri")));
+
         testM.printDeleteTs();
         System.out.println("-------");
-       // testM.sortDeleteTs();
-        //testM.printDeleteTs();
-        System.out.println("----------------");
         testM.modelDelete();
         testM.printDeleteTs();
         System.out.println("-------");
-        //testM.sortDeleteTs();
-        //testM.printDeleteTs();
-        System.out.println("----------------");
         testM.modelDelete();
         testM.printDeleteTs();
         System.out.println("-------");
-        //testM.sortDeleteTs();
-        //testM.printDeleteTs();
-        System.out.println("----------------");
         testM.modelDelete();
         testM.printDeleteTs();
         System.out.println("-------");
-        //testM.sortDeleteTs();
-        //testM.printDeleteTs();
-        System.out.println("----------------");
+
 
 
 
