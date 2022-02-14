@@ -13,7 +13,7 @@ import static sun.security.pkcs11.wrapper.Constants.*;
 public class Main {
     public static void main(String[] args) {
 
-        new deleteTest().deleteTest();
+        //new deleteTest().deleteTest();
         /**String nums="0";
         int numi=0;
         System.out.println(nums);
@@ -27,7 +27,7 @@ public class Main {
          FPSAnimator animator=new FPSAnimator(canvas,60,true);
          **/
 
-/**
+
         //运行GUI代码在事件分发线程以保证线程安全
         SwingUtilities.invokeLater(() -> {
             //创建OpenGL渲染画布
@@ -111,6 +111,6 @@ public class Main {
             frame.pack();
             frame.setVisible(true);
             animator.start();//开始动画循环
-        });**/
+        });
     }
 }

@@ -24,6 +24,7 @@ public class Tris {
     }
 
     public void sort(Tris Ts){
+        if(Ts.tris.isEmpty()) return;
         this.tris.clear();
         Tri targetT = new Tri();
         Tris newTs=new Tris();

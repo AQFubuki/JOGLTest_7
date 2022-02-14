@@ -4,7 +4,7 @@ import Models.Vertex;
 
 public class deleteTest {
     public void deleteTest(){
-        Vertex A=new Vertex("A",true);
+        /**Vertex A=new Vertex("A",true);
         Vertex B=new Vertex("B",true);
         Vertex C=new Vertex("C",true);
         Vertex D=new Vertex("D",true);
@@ -51,7 +51,27 @@ public class deleteTest {
         System.out.println("-------");
         testM.modelDelete();
         testM.printDeleteTs();
-        System.out.println("-------");
+        System.out.println("-------");**/
+        Model testSort=new Model();
+        testSort.sortDeleteTs.tris.put("1",new Tri("ABC"));
+        testSort.sortDeleteTs.tris.put("11",new Tri("bcd"));
+        testSort.sortDeleteTs.tris.put("21",new Tri("cde"));
+        testSort.sortDeleteTs.tris.put("2",new Tri("def"));
+        testSort.sortDeleteTs.tris.put("efg",new Tri("efg"));
+        testSort.sortDeleteTs.tris.put("ghi",new Tri("ghi"));
+        testSort.sortDeleteTs.tris.put("22",new Tri("def"));
+        testSort.sortDeleteTs.tris.put("3",new Tri("def"));
+        testSort.sortDeleteTs.tris.put("4",new Tri("def"));
+        testSort.sortDeleteTs.tris.put("5",new Tri("def"));
+        testSort.sortDeleteTs.tris.put("6",new Tri("def"));
+        testSort.sortDeleteTs.tris.put("7",new Tri("def"));
+        testSort.sortDeleteTs.tris.put("8",new Tri("def"));
+        testSort.sortDeleteTs.tris.put("9",new Tri("def"));
+        testSort.sortDeleteTs.tris.put("10",new Tri("def"));
+
+        //testSort.sortDeleteTS[0].tris.put("1",new Tri("qwe"));
+        testSort.setSortDeleteTS();
+        testSort.printDeleteTS();
 
 
 

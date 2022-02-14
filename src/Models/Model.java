@@ -12,6 +12,8 @@ public class Model {
 
     public Tris deleteTs = new Tris();
     public Tris sortDeleteTs=new Tris();
+    public Tris[] sortDeleteTS=new Tris[]{new Tris(),new Tris(),new Tris(),new Tris(),new Tris(),
+            new Tris(),new Tris(),new Tris(),new Tris(),new Tris(),new Tris()};
 
     public Model() {
     }
@@ -141,17 +143,20 @@ public class Model {
         deleteTs.tris.clear();
         deleteTs.tris.putAll(newDeleteTs.tris);
         sortDeleteTs.sort(deleteTs);
+        this.setSortDeleteTS();
 
-        //System.out.println("O:");
-        //printDeleteTs();
-        //sortDeleteTs();
-        //System.out.println("sort:");
-        //printDeleteTs();
+        System.out.println("*******************");
+        this.printDeleteTS();
+        System.out.println("*******************");
     }
 
     public void addDeleteTs(Tri tri){
         this.deleteTs.tris.put(tri.getTag(), tri);
         sortDeleteTs.sort(deleteTs);
+        this.setSortDeleteTS();
+        System.out.println("*******************");
+        this.printDeleteTS();
+        System.out.println("*******************");
 
     }
 
@@ -302,36 +307,26 @@ public class Model {
         this.Es.edges.remove(e.tag);//从边集中删除
     }
 
-    /**public void sortDeleteTs() {
-        Tri targetT = new Tri();
-        Tris newDeleteTs = new Tris();
-        int num = 0;
-        boolean isNear = false;
-        int size=deleteTs.tris.size();
-        targetT = deleteTs.tris.entrySet().iterator().next().getValue();
-        newDeleteTs.tris.put(String.valueOf(num++), targetT);
-        deleteTs.tris.remove(targetT.getTag());
-
-
-        while (num > 0 && num < size) {
-            //deleteTs.tris.size()会逐渐减少
-            for (Tri tempT : targetT.hasCommonPoint.tris.values()) {
-                if (deleteTs.tris.containsKey(tempT.getTag())) {
-                    targetT = tempT;
-                    isNear = true;
-                    break;
+    public void setSortDeleteTS(){
+        //sortDeleteTS[10].tris.putAll(sortDeleteTs.tris);
+        for(int i=0;i<11;i++){
+            sortDeleteTS[i].tris.clear();
+        }
+        int num=10;
+        for(String numTag:sortDeleteTs.tris.keySet()){
+            //tag未更改，说明没有参与排序
+            if(numTag.equals(sortDeleteTs.tris.get(numTag).getTag())){
+                num=10;
+            }else{
+                num=Integer.valueOf(numTag.substring(numTag.length()-1)).intValue();
+                if(num<0 || num>9){
+                    System.out.println("ERROR:setSortDeleteTS");
+                    return;
                 }
             }
-            if (isNear) {
-                newDeleteTs.tris.put(String.valueOf(num++), targetT);
-                deleteTs.tris.remove(targetT.getTag());
-                isNear = false;
-            } else {
-                num = -1;
-            }
+            sortDeleteTS[num].tris.put(numTag,sortDeleteTs.tris.get(numTag));
         }
-        deleteTs.tris.putAll(newDeleteTs.tris);
-    }**/
+    }
 
     public void printDeleteTs() {
         for (String tag : deleteTs.tris.keySet()) {
@@ -341,6 +336,20 @@ public class Model {
         for (String tag : sortDeleteTs.tris.keySet()) {
             System.out.println(tag + " "+sortDeleteTs.tris.getOrDefault(tag,new Tri("no tri")).getTag());
         }
+    }
+
+    public void printDeleteTS() {
+        for (String tag : deleteTs.tris.keySet()) {
+            System.out.println(tag + " "+deleteTs.tris.getOrDefault(tag,new Tri("no tri")).getTag());
+        }
+        System.out.println("//////////////");
+        for(int i=0;i<11;i++){
+            System.out.println("``````"+i+"号：``````");
+            for (String tag : sortDeleteTS[i].tris.keySet()) {
+                System.out.println(tag + " "+sortDeleteTS[i].tris.getOrDefault(tag,new Tri("no tri")).getTag());
+            }
+        }
+
     }
 
     public void printTris() {
@@ -358,5 +367,6 @@ public class Model {
     public void printVsnear() {
         Vs.printTag();
         Vs.print();
+        System.out.println();
     }
 }
