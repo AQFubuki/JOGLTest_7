@@ -125,14 +125,13 @@ public class Model {
         if (deleteTs.tris.isEmpty()) return;
 
         Tris newDeleteTs = new Tris();
-        if (!deleteTs.tris.values().isEmpty()) {
-            for (Tri tempT : deleteTs.tris.values()) {//遍历待删除的面集合，把他们相邻的面添加到新的删除面集合中
-                if (!tempT.hasCommonPoint.tris.isEmpty()) {
-                    for (Tri tempT1 : tempT.hasCommonPoint.tris.values()) {
-                        if (!newDeleteTs.tris.containsKey(tempT1.tag)
-                                && !deleteTs.tris.containsKey(tempT1.tag)) {
-                            newDeleteTs.tris.put(tempT1.tag, tempT1);
-                        }
+        for (Tri tempT : deleteTs.tris.values()) {//遍历待删除的面集合，把他们相邻的面添加到新的删除面集合中
+            if (!tempT.hasCommonPoint.tris.isEmpty()) {
+                for (Tri tempT1 : tempT.hasCommonPoint.tris.values()) {
+                    if (!newDeleteTs.tris.containsKey(tempT1.getTag())
+                            && !deleteTs.tris.containsKey(tempT1.getTag())
+                    &&this.Ts.tris.containsKey(tempT1.getTag())) {
+                        newDeleteTs.tris.put(tempT1.getTag(), tempT1);
                     }
                 }
             }

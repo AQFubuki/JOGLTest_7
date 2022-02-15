@@ -32,19 +32,6 @@ public class MyListener implements GLEventListener {
     private float backVers[]=new float[testModel.Ts.tris.size()*3*5];
     private float deleteVers[]=new float[testModel.Ts.tris.size()*3*5];
     private float deleteVersSort[][]=new float[11][testModel.Ts.tris.size()*3*5];
-    /**private float deleteVers0[]=new float[testModel.Ts.tris.size()*3*5];
-    private float deleteVers1[]=new float[testModel.Ts.tris.size()*3*5];
-    private float deleteVers2[]=new float[testModel.Ts.tris.size()*3*5];
-    private float deleteVers3[]=new float[testModel.Ts.tris.size()*3*5];
-    private float deleteVers4[]=new float[testModel.Ts.tris.size()*3*5];
-    private float deleteVers5[]=new float[testModel.Ts.tris.size()*3*5];
-    private float deleteVers6[]=new float[testModel.Ts.tris.size()*3*5];
-    private float deleteVers7[]=new float[testModel.Ts.tris.size()*3*5];
-    private float deleteVers8[]=new float[testModel.Ts.tris.size()*3*5];
-    private float deleteVers9[]=new float[testModel.Ts.tris.size()*3*5];**/
-
-
-
 
     private  int program;
     private GLU glu;
@@ -120,13 +107,22 @@ public class MyListener implements GLEventListener {
 
         gl.glEnable(GL_CULL_FACE);//剔除背面
 
-        for(int i=0;i<13;i++){
-            gl.glActiveTexture(GL_TEXTURE0+i);
-            gl.glBindTexture(GL_TEXTURE_2D,TextureName.get(i));
-            gl.glUniform1i(gl.glGetUniformLocation(program,"ourTexture"),i);
-            gl.glBindVertexArray(ArrayName.get(i));
-            gl.glDrawArrays(GL_TRIANGLES,0,testModel.Ts.tris.size()*3);
+        for(int i=11;i<13;i++){
+            Draw(i,testModel.Ts.tris.size(),gl);//11 12分别为绘制正面和背面
         }
+        //应该考虑每次都把删除数组清空，否则范围不对就会显示错误
+        for(int i=0;i<11;i++){
+            Draw(i,testModel.sortDeleteTS[i].tris.size(),gl);
+        }
+        //Draw(13,testModel.deleteTs.tris.size(),gl);
+    }
+    private void Draw(int i,int size,GL3 gl){
+        gl.glActiveTexture(GL_TEXTURE0+i);
+        gl.glBindTexture(GL_TEXTURE_2D,TextureName.get(i));
+        gl.glUniform1i(gl.glGetUniformLocation(program,"ourTexture"),i);
+        gl.glBindVertexArray(ArrayName.get(i));
+        gl.glDrawArrays(GL_TRIANGLES,0,size*3);
+
     }
 
     @Override
@@ -140,7 +136,7 @@ public class MyListener implements GLEventListener {
         gl.glGenBuffers(14, BufferName);
         initBuffer(11,frontVers,gl);//设置前面
         initBuffer(12,backVers,gl);//设置背面
-        //initBuffer(13,deleteVers,gl);//设置删除面
+        initBuffer(13,deleteVers,gl);//设置删除面
         for(int i=0;i<11;i++){
             initBuffer(i,deleteVersSort[i],gl);
         }
@@ -247,65 +243,6 @@ public class MyListener implements GLEventListener {
             initTexture(11, "/src/image/pink.jpg", "jpg", gl);
             initTexture(12, "/src/image/blue.jpg", "jpg", gl);
             initTexture(13, "/src/image/temp1.jpg", "jpg", gl);
-
-            /**TextureData data= TextureIO.newTextureData(GLProfile.getDefault(),new File(
-                    System.getProperty("user.dir") + "/src/image/pink.jpg"),false,TextureIO.JPG);
-            gl.glActiveTexture(GL_TEXTURE0);//开启0号通道
-            gl.glBindTexture(GL_TEXTURE_2D,TextureName.get(0));//绑定
-            gl.glPixelStorei(GL_UNPACK_ALIGNMENT,1);//解决图像宽度不能整除4带来的缓冲区不足的问题
-            //System.out.println(data.getBuffer());
-            gl.glTexImage2D(
-                    GL_TEXTURE_2D,
-                    0,
-                    data.getInternalFormat(),
-                    data.getWidth(),
-                    data.getHeight(),
-                    data.getBorder(),
-                    data.getPixelFormat(),
-                    data.getPixelType(),
-                    data.getBuffer()
-            );
-            gl.glGenerateMipmap(GL_TEXTURE_2D);
-            data.destroy();//销毁data
-
-            data= TextureIO.newTextureData(GLProfile.getDefault(),new File(
-                    System.getProperty("user.dir") + "/src/image/blue.jpg"),false,TextureIO.JPG);
-            gl.glActiveTexture(GL_TEXTURE1);
-            gl.glBindTexture(GL_TEXTURE_2D,TextureName.get(1));//绑定
-            gl.glPixelStorei(GL_UNPACK_ALIGNMENT,1);//解决图像宽度不能整除4带来的缓冲区不足的问题
-            gl.glTexImage2D(
-                    GL_TEXTURE_2D,
-                    0,
-                    data.getInternalFormat(),
-                    data.getWidth(),
-                    data.getHeight(),
-                    data.getBorder(),
-                    data.getPixelFormat(),
-                    data.getPixelType(),
-                    data.getBuffer()
-            );
-            gl.glGenerateMipmap(GL_TEXTURE_2D);
-            data.destroy();//销毁data
-
-            data= TextureIO.newTextureData(GLProfile.getDefault(),new File(
-                    System.getProperty("user.dir") + "/src/image/temp1.jpg"),false,TextureIO.JPG);
-            gl.glActiveTexture(GL_TEXTURE2);
-            gl.glBindTexture(GL_TEXTURE_2D,TextureName.get(2));//绑定
-            gl.glPixelStorei(GL_UNPACK_ALIGNMENT,1);//解决图像宽度不能整除4带来的缓冲区不足的问题
-            gl.glTexImage2D(
-                    GL_TEXTURE_2D,
-                    0,
-                    data.getInternalFormat(),
-                    data.getWidth(),
-                    data.getHeight(),
-                    data.getBorder(),
-                    data.getPixelFormat(),
-                    data.getPixelType(),
-                    data.getBuffer()
-            );
-            gl.glGenerateMipmap(GL_TEXTURE_2D);
-            data.destroy();//销毁data **/
-
             gl.glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,GL_REPEAT);
             gl.glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,GL_REPEAT);
             gl.glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
@@ -409,7 +346,7 @@ public class MyListener implements GLEventListener {
     }
 
     private void initDeleteVers() {
-        /**ArrayList<Float> deleteV=new ArrayList<Float> ();
+        ArrayList<Float> deleteV=new ArrayList<Float> ();
         for(Tri tempT:testModel.deleteTs.tris.values()){
             deleteV.add((float)((tempT.getV0().getX()-70)*0.05));
             deleteV.add((float)((tempT.getV0().getY()-70)*0.05));
@@ -433,7 +370,7 @@ public class MyListener implements GLEventListener {
 
         for(int i=0;i<testModel.deleteTs.tris.size()*3*5;i++){
             deleteVers[i]=deleteV.get(i);
-        }**/
+        }
 
         for(int i=0;i<11;i++){
             initDeleteVersSort(i);
