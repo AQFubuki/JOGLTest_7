@@ -11,7 +11,7 @@ public class Model {
     public Tris Ts = new Tris();
 
     public Tris deleteTs = new Tris();
-    public Tris sortDeleteTs=new Tris();
+    public TRISs deleteTSs=new TRISs();
     public Tris[] sortDeleteTS=new Tris[]{new Tris(),new Tris(),new Tris(),new Tris(),new Tris(),
             new Tris(),new Tris(),new Tris(),new Tris(),new Tris(),new Tris()};
 
@@ -141,7 +141,8 @@ public class Model {
         }
         deleteTs.tris.clear();
         deleteTs.tris.putAll(newDeleteTs.tris);
-        sortDeleteTs.sort(deleteTs);
+        deleteTs.sort();
+        deleteTSs.setTRISs(deleteTs);
         this.setSortDeleteTS();
 
         System.out.println("*******************");
@@ -151,7 +152,8 @@ public class Model {
 
     public void addDeleteTs(Tri tri){
         this.deleteTs.tris.put(tri.getTag(), tri);
-        sortDeleteTs.sort(deleteTs);
+        deleteTs.sort();
+        deleteTSs.setTRISs(deleteTs);
         this.setSortDeleteTS();
         System.out.println("*******************");
         this.printDeleteTS();
@@ -312,18 +314,20 @@ public class Model {
             sortDeleteTS[i].tris.clear();
         }
         int num=10;
-        for(String numTag:sortDeleteTs.tris.keySet()){
-            //tag未更改，说明没有参与排序
-            if(numTag.equals(sortDeleteTs.tris.get(numTag).getTag())){
-                num=10;
-            }else{
-                num=Integer.valueOf(numTag.substring(numTag.length()-1)).intValue();
-                if(num<0 || num>9){
-                    System.out.println("ERROR:setSortDeleteTS");
-                    return;
+        for(Tris Ts:this.deleteTSs.TRISs.values()){
+            for(String numTag:Ts.sortTris.keySet()){
+                //tag未更改，说明没有参与排序
+                if(numTag.equals(Ts.sortTris.get(numTag).getTag())){
+                    num=10;
+                }else{
+                    num=Integer.valueOf(numTag.substring(numTag.length()-1)).intValue();
+                    if(num<0 || num>9){
+                        System.out.println("ERROR:setSortDeleteTS");
+                        return;
+                    }
                 }
+                sortDeleteTS[num].tris.put(numTag,Ts.sortTris.get(numTag));
             }
-            sortDeleteTS[num].tris.put(numTag,sortDeleteTs.tris.get(numTag));
         }
     }
 
@@ -332,8 +336,8 @@ public class Model {
             System.out.println(tag + " "+deleteTs.tris.getOrDefault(tag,new Tri("no tri")).getTag());
         }
         System.out.println("//////////////");
-        for (String tag : sortDeleteTs.tris.keySet()) {
-            System.out.println(tag + " "+sortDeleteTs.tris.getOrDefault(tag,new Tri("no tri")).getTag());
+        for (String tag : deleteTs.sortTris.keySet()) {
+            System.out.println(tag + " "+deleteTs.sortTris.getOrDefault(tag,new Tri("no tri")).getTag());
         }
     }
 

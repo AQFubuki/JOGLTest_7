@@ -53,21 +53,10 @@ public class deleteTest {
         testM.printDeleteTs();
         System.out.println("-------");**/
         Model testSort=new Model();
-        testSort.sortDeleteTs.tris.put("1",new Tri("ABC"));
-        testSort.sortDeleteTs.tris.put("11",new Tri("bcd"));
-        testSort.sortDeleteTs.tris.put("21",new Tri("cde"));
-        testSort.sortDeleteTs.tris.put("2",new Tri("def"));
-        testSort.sortDeleteTs.tris.put("efg",new Tri("efg"));
-        testSort.sortDeleteTs.tris.put("ghi",new Tri("ghi"));
-        testSort.sortDeleteTs.tris.put("22",new Tri("def"));
-        testSort.sortDeleteTs.tris.put("3",new Tri("def"));
-        testSort.sortDeleteTs.tris.put("4",new Tri("def"));
-        testSort.sortDeleteTs.tris.put("5",new Tri("def"));
-        testSort.sortDeleteTs.tris.put("6",new Tri("def"));
-        testSort.sortDeleteTs.tris.put("7",new Tri("def"));
-        testSort.sortDeleteTs.tris.put("8",new Tri("def"));
-        testSort.sortDeleteTs.tris.put("9",new Tri("def"));
-        testSort.sortDeleteTs.tris.put("10",new Tri("def"));
+        testSort.deleteTs.sortTris.put("1",new Tri("ABC"));
+        testSort.deleteTs.sortTris.put("11",new Tri("bcd"));
+        testSort.deleteTs.sortTris.put("21",new Tri("cde"));
+        testSort.deleteTs.sortTris.put("2",new Tri("def"));
 
         //testSort.sortDeleteTS[0].tris.put("1",new Tri("qwe"));
         testSort.setSortDeleteTS();
