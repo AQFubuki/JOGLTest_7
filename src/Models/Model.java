@@ -11,9 +11,17 @@ public class Model {
     public Tris Ts = new Tris();
 
     public Tris deleteTs = new Tris();
-    public TRISs deleteTSs=new TRISs();
-    public Tris[] sortDeleteTS=new Tris[]{new Tris(),new Tris(),new Tris(),new Tris(),new Tris(),
-            new Tris(),new Tris(),new Tris(),new Tris(),new Tris(),new Tris()};
+    public TRISs deleteTSs = new TRISs();
+    public Tris[] sortDeleteTS = new Tris[]{new Tris(), new Tris(), new Tris(), new Tris(), new Tris(),
+            new Tris(), new Tris(), new Tris(), new Tris(), new Tris(), new Tris()
+    };
+
+    public Tris Hole_Edge = new Tris();
+    public TRISs Hole_Edges = new TRISs();
+    public Tris[] sortHole_Edge = new Tris[]{
+            new Tris(), new Tris(), new Tris(), new Tris(), new Tris(),
+            new Tris(), new Tris(), new Tris(), new Tris(), new Tris()
+    };
 
     public Model() {
     }
@@ -130,7 +138,7 @@ public class Model {
                 for (Tri tempT1 : tempT.hasCommonPoint.tris.values()) {
                     if (!newDeleteTs.tris.containsKey(tempT1.getTag())
                             && !deleteTs.tris.containsKey(tempT1.getTag())
-                    &&this.Ts.tris.containsKey(tempT1.getTag())) {
+                            && this.Ts.tris.containsKey(tempT1.getTag())) {
                         newDeleteTs.tris.put(tempT1.getTag(), tempT1);
                     }
                 }
@@ -148,9 +156,10 @@ public class Model {
         System.out.println("*******************");
         this.printDeleteTS();
         System.out.println("*******************");
+        this.setHole();
     }
 
-    public void addDeleteTs(Tri tri){
+    public void addDeleteTs(Tri tri) {
         this.deleteTs.tris.put(tri.getTag(), tri);
         deleteTs.sort();
         deleteTSs.setTRISs(deleteTs);
@@ -308,48 +317,83 @@ public class Model {
         this.Es.edges.remove(e.tag);//从边集中删除
     }
 
-    public void setSortDeleteTS(){
+    public void setSortDeleteTS() {
         //sortDeleteTS[10].tris.putAll(sortDeleteTs.tris);
-        for(int i=0;i<11;i++){
+        for (int i = 0; i < 11; i++) {
             sortDeleteTS[i].tris.clear();
         }
-        int num=10;
-        for(Tris Ts:this.deleteTSs.TRISs.values()){
-            for(String numTag:Ts.sortTris.keySet()){
+        int num = 10;
+        for (Tris Ts : this.deleteTSs.TRISs.values()) {
+            for (String numTag : Ts.sortTris.keySet()) {
                 //tag未更改，说明没有参与排序
-                if(numTag.equals(Ts.sortTris.get(numTag).getTag())){
-                    num=10;
-                }else{
-                    num=Integer.valueOf(numTag.substring(numTag.length()-1)).intValue();
-                    if(num<0 || num>9){
+                if (numTag.equals(Ts.sortTris.get(numTag).getTag())) {
+                    num = 10;
+                } else {
+                    num = Integer.valueOf(numTag.substring(numTag.length() - 1)).intValue();
+                    if (num < 0 || num > 9) {
                         System.out.println("ERROR:setSortDeleteTS");
                         return;
                     }
                 }
-                sortDeleteTS[num].tris.put(numTag,Ts.sortTris.get(numTag));
+                sortDeleteTS[num].tris.put(Ts.sortTris.get(numTag).getTag() + numTag, Ts.sortTris.get(numTag));
+            }
+        }
+    }
+
+    public void setHole() {
+        this.Hole_Edge.tris.clear();
+        for (Tri tri : this.Ts.tris.values()) {
+            if (tri.isHole()) {
+                this.Hole_Edge.tris.put(tri.getTag(), tri);
+            }
+        }
+        this.Hole_Edges.setTRISs(this.Hole_Edge);
+        this.setSortHole_Edge();
+
+    }
+
+    public void setSortHole_Edge() {
+        for (int i = 0; i < 10; i++) {
+            sortHole_Edge[i].tris.clear();
+        }
+        int num = 0;
+        for (Tris Ts : this.Hole_Edges.TRISs.values()) {
+            for (String numTag : Ts.sortTris.keySet()) {
+                //tag未更改，说明有未参与排序的三角
+                if (numTag.equals(Ts.sortTris.get(numTag).getTag())) {
+                    System.out.println("ERROR:setSortHle_Edge");
+                    return;
+                } else {
+                    num = Integer.valueOf(numTag.substring(numTag.length() - 1)).intValue();
+                    if (num < 0 || num > 9) {
+                        System.out.println("ERROR:setSortHle_Edge");
+                        return;
+                    }
+                }
+                sortHole_Edge[num].tris.put(Ts.sortTris.get(numTag).getTag() + numTag, Ts.sortTris.get(numTag));
             }
         }
     }
 
     public void printDeleteTs() {
         for (String tag : deleteTs.tris.keySet()) {
-            System.out.println(tag + " "+deleteTs.tris.getOrDefault(tag,new Tri("no tri")).getTag());
+            System.out.println(tag + " " + deleteTs.tris.getOrDefault(tag, new Tri("no tri")).getTag());
         }
         System.out.println("//////////////");
         for (String tag : deleteTs.sortTris.keySet()) {
-            System.out.println(tag + " "+deleteTs.sortTris.getOrDefault(tag,new Tri("no tri")).getTag());
+            System.out.println(tag + " " + deleteTs.sortTris.getOrDefault(tag, new Tri("no tri")).getTag());
         }
     }
 
     public void printDeleteTS() {
         for (String tag : deleteTs.tris.keySet()) {
-            System.out.println(tag + " "+deleteTs.tris.getOrDefault(tag,new Tri("no tri")).getTag());
+            System.out.println(tag + " " + deleteTs.tris.getOrDefault(tag, new Tri("no tri")).getTag());
         }
         System.out.println("//////////////");
-        for(int i=0;i<11;i++){
-            System.out.println("``````"+i+"号：``````");
+        for (int i = 0; i < 11; i++) {
+            System.out.println("``````" + i + "号：``````");
             for (String tag : sortDeleteTS[i].tris.keySet()) {
-                System.out.println(tag + " "+sortDeleteTS[i].tris.getOrDefault(tag,new Tri("no tri")).getTag());
+                System.out.println(tag + " " + sortDeleteTS[i].tris.getOrDefault(tag, new Tri("no tri")).getTag());
             }
         }
 

@@ -23,8 +23,8 @@ import static com.jogamp.opengl.GL2ES1.GL_PERSPECTIVE_CORRECTION_HINT;
 
 public class MyListener implements GLEventListener {
 
-    private final IntBuffer ArrayName = GLBuffers.newDirectIntBuffer(14);//VAO的buffer
-    private final IntBuffer BufferName = GLBuffers.newDirectIntBuffer(14);//VBO的buffer
+    private final IntBuffer ArrayName = GLBuffers.newDirectIntBuffer(Data.VAONum);//VAO的buffer
+    private final IntBuffer BufferName = GLBuffers.newDirectIntBuffer(Data.VBONum);//VBO的buffer
     private final IntBuffer TextureName = GLBuffers.newDirectIntBuffer(14);//纹理的buffer
 
     private Models.Model testModel=new Model(System.getProperty("user.dir") + "/src/stl/Twoman.stl");
@@ -32,6 +32,7 @@ public class MyListener implements GLEventListener {
     private float backVers[]=new float[testModel.Ts.tris.size()*3*5];
     private float deleteVers[]=new float[testModel.Ts.tris.size()*3*5];
     private float deleteVersSort[][]=new float[11][testModel.Ts.tris.size()*3*5];
+    private float hole_Edge[][]=new float[10][testModel.Ts.tris.size()*3*5];
 
     private  int program;
     private GLU glu;
@@ -56,17 +57,20 @@ public class MyListener implements GLEventListener {
         gl.glDepthFunc(GL_LEQUAL);//the type of depth test to do
         gl.glHint(GL_PERSPECTIVE_CORRECTION_HINT,GL_NICEST);//best perspective correction
         //---------以下为自定义初始化代码-----------
-        initFrontVers();
-        initBackVers();
-        initDeleteVers();
-        initBuffer(gl);
+        initModel(gl);
 
         initShader(gl);//初始化着色器
         initTexture(gl);//初始化纹理
         initMatrix(gl);
     }
 
-
+    private void initModel(GL3 gl) {
+        initFrontVers();
+        initBackVers();
+        initDeleteVers();
+        initHoleEdge();
+        initBuffer(gl);
+    }
 
     @Override
     public void dispose(GLAutoDrawable glAutoDrawable) {
@@ -86,10 +90,7 @@ public class MyListener implements GLEventListener {
                         "9.985004E+01 8.175720E+01 7.163765E+01"));
             }
             testModel.modelDelete();
-            initFrontVers();
-            initBackVers();
-            initDeleteVers();
-            initBuffer(gl);
+            initModel(gl);
             startDelete=false;
         }
 
@@ -112,18 +113,24 @@ public class MyListener implements GLEventListener {
         }
         //应该考虑每次都把删除数组清空，否则范围不对就会显示错误
         for(int i=0;i<11;i++){
-            Draw(i,testModel.sortDeleteTS[i].tris.size(),gl);
+            //Draw(i,testModel.sortDeleteTS[i].tris.size(),gl);
         }
         //Draw(13,testModel.deleteTs.tris.size(),gl);
+        for(int i=0;i<10;i++){
+            Draw(i+14,i,testModel.sortHole_Edge[i].tris.size(),gl);
+        }
     }
     private void Draw(int i,int size,GL3 gl){
-        gl.glActiveTexture(GL_TEXTURE0+i);
-        gl.glBindTexture(GL_TEXTURE_2D,TextureName.get(i));
-        gl.glUniform1i(gl.glGetUniformLocation(program,"ourTexture"),i);
-        gl.glBindVertexArray(ArrayName.get(i));
-        gl.glDrawArrays(GL_TRIANGLES,0,size*3);
-
+        Draw(i,i,size,gl);
     }
+    private void Draw(int VertexNum,int TextureNum,int size,GL3 gl){
+        gl.glActiveTexture(GL_TEXTURE0+TextureNum);
+        gl.glBindTexture(GL_TEXTURE_2D,TextureName.get(TextureNum));
+        gl.glUniform1i(gl.glGetUniformLocation(program,"ourTexture"),TextureNum);
+        gl.glBindVertexArray(ArrayName.get(VertexNum));
+        gl.glDrawArrays(GL_TRIANGLES,0,size*3);
+    }
+
 
     @Override
     public void reshape(GLAutoDrawable glAutoDrawable, int i, int i1, int i2, int i3) {
@@ -132,13 +139,16 @@ public class MyListener implements GLEventListener {
 
     private void initBuffer(GL3 gl) {
         //设置VAO和VBO
-        gl.glGenVertexArrays(14, ArrayName);
-        gl.glGenBuffers(14, BufferName);
+        gl.glGenVertexArrays(Data.VAONum, ArrayName);
+        gl.glGenBuffers(Data.VBONum, BufferName);
         initBuffer(11,frontVers,gl);//设置前面
         initBuffer(12,backVers,gl);//设置背面
         initBuffer(13,deleteVers,gl);//设置删除面
         for(int i=0;i<11;i++){
             initBuffer(i,deleteVersSort[i],gl);
+        }
+        for(int i=14;i<24;i++){
+            initBuffer(i,hole_Edge[i-14],gl);
         }
 
     }
@@ -314,7 +324,6 @@ public class MyListener implements GLEventListener {
             frontVers[i]=frontV.get(i);
         }
     }
-
     private void initBackVers() {
         ArrayList<Float> backV=new ArrayList<Float> ();
         for(Tri tempT:testModel.Ts.tris.values()){
@@ -376,7 +385,6 @@ public class MyListener implements GLEventListener {
             initDeleteVersSort(i);
         }
     }
-
     private void initDeleteVersSort(int num) {
         ArrayList<Float> deleteV=new ArrayList<Float> ();
         for(Tri tempT:testModel.sortDeleteTS[num].tris.values()){
@@ -404,6 +412,40 @@ public class MyListener implements GLEventListener {
         }
 
     }
+
+    private void initHoleEdge() {
+        for(int i=0;i<10;i++){
+            initHoleEfgeSort(i);
+        }
+    }
+    private void initHoleEfgeSort(int num){
+        ArrayList<Float> deleteV=new ArrayList<Float> ();
+        for(Tri tempT:testModel.sortHole_Edge[num].tris.values()){
+            deleteV.add((float)((tempT.getV0().getX()-70)*0.05));
+            deleteV.add((float)((tempT.getV0().getY()-70)*0.05));
+            deleteV.add((float)((tempT.getV0().getZ()-70)*0.05));
+            deleteV.add(0.5f);
+            deleteV.add(1.0f);
+
+            deleteV.add((float)((tempT.getV1().getX()-70)*0.05));
+            deleteV.add((float)((tempT.getV1().getY()-70)*0.05));
+            deleteV.add((float)((tempT.getV1().getZ()-70)*0.05));
+            deleteV.add(1.0f);
+            deleteV.add(0.0f);
+
+            deleteV.add((float)((tempT.getV2().getX()-70)*0.05));
+            deleteV.add((float)((tempT.getV2().getY()-70)*0.05));
+            deleteV.add((float)((tempT.getV2().getZ()-70)*0.05));
+            deleteV.add(0.0f);
+            deleteV.add(0.0f);
+
+        }
+        for(int i=0;i<testModel.sortHole_Edge[num].tris.size()*3*5;i++){
+            hole_Edge[num][i]=deleteV.get(i);
+        }
+    }
+
+
 
     public Camera getCamera(){
         return camera;

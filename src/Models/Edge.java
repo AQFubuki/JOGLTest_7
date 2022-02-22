@@ -89,6 +89,10 @@ public class Edge {
         this.tag = tag;
     }
 
+    public boolean isHole(){
+        return (this.Tri==null || this.adjTri==null)?true:false;
+    }
+
     public void printTag(){
         System.out.println(this.getTag());
     }

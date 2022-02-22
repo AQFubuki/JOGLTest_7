@@ -42,6 +42,10 @@ public class Tri {
         }
     }
 
+    public boolean isHole(){
+        return (this.getE0().isHole() || this.getE1().isHole() || this.getE2().isHole())?true:false;
+    }
+
     public String getTag() {
         return tag;
     }
