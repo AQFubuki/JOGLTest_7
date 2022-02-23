@@ -14,7 +14,9 @@ public class Camera {
     public float Pitch, Yaw;
     float speed = 0.3f;
 
-    public Camera(){}
+    public Camera() {
+    }
+
     public Camera(glm.vec._3.Vec3 position, float pitch, float yaw, glm.vec._3.Vec3 worldup) {
         Position = position;
         Worldup = worldup;

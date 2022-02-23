@@ -15,11 +15,11 @@ public class Main {
 
         //new deleteTest().deleteTest();
         /**String nums="0";
-        int numi=0;
-        System.out.println(nums);
-        numi++;
-        nums=String.valueOf(numi);
-        System.out.println(nums);**/
+         int numi=0;
+         System.out.println(nums);
+         numi++;
+         nums=String.valueOf(numi);
+         System.out.println(nums);**/
         /**GLCanvas canvas=new GLCanvas();
          JFrame frame=new JFrame();
          frame.getContentPane().add(canvas);
@@ -32,7 +32,7 @@ public class Main {
         SwingUtilities.invokeLater(() -> {
             //创建OpenGL渲染画布
             GLCanvas canvas = new GLCanvas();
-            MyListener myListener=new MyListener();
+            MyListener myListener = new MyListener();
             canvas.addGLEventListener(myListener);
             //canvas.setPreferredSize(new Dimension(CANVAS_WIDTH, CANVAS_HEIGHT));
             canvas.setPreferredSize(new Dimension(1200, 900));
@@ -55,21 +55,22 @@ public class Main {
                     }).start();
                 }
             });
-            MouseAdapter adapter=new MouseAdapter() {
-                float lastX,lastY;
-                boolean isFirstMouse=true;
-                boolean isPress=true;
+            MouseAdapter adapter = new MouseAdapter() {
+                float lastX, lastY;
+                boolean isFirstMouse = true;
+                boolean isPress = true;
+
                 @Override
                 public void mousePressed(MouseEvent e) {
                     super.mousePressed(e);
-                    isPress=true;
+                    isPress = true;
                     System.out.println("press");
                 }
 
                 @Override
                 public void mouseReleased(MouseEvent e) {
                     super.mouseReleased(e);
-                    isPress=false;
+                    isPress = false;
                     System.out.println("release");
                 }
 
@@ -82,16 +83,15 @@ public class Main {
                             lastY = e.getY();
                             isFirstMouse = false;
                         }
-                        float deltaX= e.getX() - lastX;
-                        float deltaY= e.getY() - lastY;
-                        if(deltaX>=20 || deltaX<=-20)deltaX=0;
-                        if(deltaY>=20 || deltaY<=-20)deltaY=0;
+                        float deltaX = e.getX() - lastX;
+                        float deltaY = e.getY() - lastY;
+                        if (deltaX >= 20 || deltaX <= -20) deltaX = 0;
+                        if (deltaY >= 20 || deltaY <= -20) deltaY = 0;
 
                         myListener.getCamera().moveRadians(deltaX, deltaY);
 
                         lastX = e.getX();
                         lastY = e.getY();
-
                     }
                 }
             };

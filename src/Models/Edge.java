@@ -18,6 +18,9 @@ public class Edge {
         this.ev = ev;
         this.tag = sv.getT() + ev.getT();
     }
+    public Edge(String tag){
+        this.setTag(tag);
+    }
 
    /** public void addnearVs(Vertex v) {
         this.nearVs.vertexs.put(v.getT(), v);
@@ -112,5 +115,11 @@ public class Edge {
         System.out.println("nearEdges:");
         nearEs.printTag();
 
+    }
+    public boolean isEquals(String t){
+        return this.getTag().equals(t);
+    }
+    public boolean isEquals(Edge e){
+        return this.isEquals(e.getTag());
     }
 }

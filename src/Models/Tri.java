@@ -172,4 +172,11 @@ public class Tri {
             return true;
         }else{return false;}
     }
+
+    public boolean hasEdge(Edge e){
+        if(this.getE0().isEquals(e) || this.getE1().isEquals(e) || this.getE2().isEquals(e)){
+            return true;
+        }
+        return false;
+    }
 }

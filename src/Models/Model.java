@@ -1,7 +1,6 @@
 package Models;
 
 import java.io.*;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -16,12 +15,15 @@ public class Model {
             new Tris(), new Tris(), new Tris(), new Tris(), new Tris(), new Tris()
     };
 
-    public Tris Hole_Edge = new Tris();
-    public TRISs Hole_Edges = new TRISs();
-    public Tris[] sortHole_Edge = new Tris[]{
+    public Tris Hole_Tri = new Tris();
+    public TRISs Hole_Tris = new TRISs();
+    public Tris[] sortHole_Tri = new Tris[]{
             new Tris(), new Tris(), new Tris(), new Tris(), new Tris(),
             new Tris(), new Tris(), new Tris(), new Tris(), new Tris()
     };
+
+    public Edges Hole_Edge = new Edges();
+    public EDGESs Hole_Edges = new EDGESs();
 
     public Model() {
     }
@@ -341,23 +343,33 @@ public class Model {
     }
 
     public void setHole() {
-        this.Hole_Edge.tris.clear();
-        for (Tri tri : this.Ts.tris.values()) {
-            if (tri.isHole()) {
-                this.Hole_Edge.tris.put(tri.getTag(), tri);
+        this.Hole_Tri.tris.clear();
+        this.Hole_Edge.edges.clear();
+        for (Edge edge : this.Es.edges.values()) {
+            if (edge.isHole()) {
+                this.Hole_Edge.edges.put(edge.getTag(), edge);
+                Tri tri = new Tri();
+                if (edge.getTri() != null) {
+                    tri = edge.getTri();
+                } else if (edge.getAdjTri() != null) {
+                    tri = edge.getAdjTri();
+                }
+                if (!this.Hole_Tri.tris.containsKey(tri.getTag()) && this.Ts.tris.containsKey(tri.getTag())) {
+                    this.Hole_Tri.tris.put(tri.getTag(), tri);
+                }
             }
         }
-        this.Hole_Edges.setTRISs(this.Hole_Edge);
-        this.setSortHole_Edge();
-
+        this.Hole_Edges.setEDGESs(this.Hole_Edge);
+        this.Hole_Tris.setTRISs(this.Hole_Edges, this.Hole_Tri);
+        this.setSortHole_Tri();
     }
 
-    public void setSortHole_Edge() {
+    public void setSortHole_Tri() {
         for (int i = 0; i < 10; i++) {
-            sortHole_Edge[i].tris.clear();
+            sortHole_Tri[i].tris.clear();
         }
         int num = 0;
-        for (Tris Ts : this.Hole_Edges.TRISs.values()) {
+        for (Tris Ts : this.Hole_Tris.TRISs.values()) {
             for (String numTag : Ts.sortTris.keySet()) {
                 //tag未更改，说明有未参与排序的三角
                 if (numTag.equals(Ts.sortTris.get(numTag).getTag())) {
@@ -370,7 +382,7 @@ public class Model {
                         return;
                     }
                 }
-                sortHole_Edge[num].tris.put(Ts.sortTris.get(numTag).getTag() + numTag, Ts.sortTris.get(numTag));
+                sortHole_Tri[num].tris.put(Ts.sortTris.get(numTag).getTag() + numTag, Ts.sortTris.get(numTag));
             }
         }
     }

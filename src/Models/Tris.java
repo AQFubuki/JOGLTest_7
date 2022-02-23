@@ -7,10 +7,6 @@ public class Tris {
 
     public HashMap<String,Tri>sortTris=new HashMap<String, Tri>();
 
-    //public Tri head=new Tri();
-
-    //public Tri tail=new Tri();
-
     public void print(){
         for(Tri t:this.tris.values()){
             t.print();
