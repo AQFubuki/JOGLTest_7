@@ -428,4 +428,8 @@ public class Model {
         Vs.print();
         System.out.println();
     }
+
+    public void printHole(){
+        this.Hole_Edge.printTag();
+    }
 }

@@ -24,8 +24,14 @@ public class Edges {
 
     public Edge hasVertex(Vertex v){
         Edge tempEdge=new Edge("no hasVertex");
-        for(Edge edge:this.edges.values()){
+       /** for(Edge edge:this.edges.values()){
             if(edge.getEv().isEquals(v) || edge.getSv().isEquals(v)){
+                tempEdge=edge;
+                break;
+            }
+        }**/
+        for(Edge edge:v.nearEs.edges.values()){
+            if(this.edges.containsKey(edge.getTag())){
                 tempEdge=edge;
                 break;
             }
