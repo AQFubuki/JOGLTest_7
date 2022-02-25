@@ -12,8 +12,9 @@ public class Edges {
         }
     }
     public void printTag(){
-        for(Edge e:this.edges.values()){
-            e.printTag();
+        for(String tag:this.sortEdges.keySet()){
+            System.out.println("EdgesNum: "+tag);
+            this.sortEdges.get(tag).printTag();
         }
     }
     public void printnearEdges(){
@@ -57,6 +58,7 @@ public class Edges {
             if(!tempEdge.getTag().equals("no hasVertex")){
                 tempEs.edges.put(tempEdge.getTag(), tempEdge);
                 tempEs.sortEdges.put(String.valueOf(num++),tempEdge);
+                this.edges.remove(tempEdge.getTag());
                 if(tempEdge.getSv().isEquals(targetV)){
                     targetV=tempEdge.getEv();
                 }else if(tempEdge.getEv().isEquals(targetV)){

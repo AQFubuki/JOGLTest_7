@@ -8,8 +8,9 @@ public class Tris {
     public HashMap<String,Tri>sortTris=new HashMap<String, Tri>();
 
     public void print(){
-        for(Tri t:this.tris.values()){
-            t.print();
+        for(String tag:this.sortTris.keySet()){
+            System.out.println("TrisNum: "+tag);
+            System.out.println(this.sortTris.get(tag).getTag());
         }
     }
 

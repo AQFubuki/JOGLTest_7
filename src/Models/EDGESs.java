@@ -16,4 +16,11 @@ public class EDGESs {
             this.EDGESs.put(String.valueOf(num++), newEs);
         }
     }
+
+    public void printTag(){
+        for(String tag:this.EDGESs.keySet()){
+            System.out.println("EDGESssNum:** "+tag);
+            this.EDGESs.get(tag).printTag();
+        }
+    }
 }

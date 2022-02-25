@@ -155,10 +155,11 @@ public class Model {
         deleteTSs.setTRISs(deleteTs);
         this.setSortDeleteTS();
 
-        System.out.println("*******************");
-        this.printDeleteTS();
-        System.out.println("*******************");
+        //System.out.println("*******************");
+        //this.printDeleteTS();
+        //System.out.println("*******************");
         this.setHole();
+        System.out.println("划分个数："+this.Hole_Edges.EDGESs.size());
     }
 
     public void addDeleteTs(Tri tri) {
@@ -166,9 +167,9 @@ public class Model {
         deleteTs.sort();
         deleteTSs.setTRISs(deleteTs);
         this.setSortDeleteTS();
-        System.out.println("*******************");
-        this.printDeleteTS();
-        System.out.println("*******************");
+        //System.out.println("*******************");
+        //this.printDeleteTS();
+        //System.out.println("*******************");
 
     }
 
@@ -383,6 +384,7 @@ public class Model {
                     }
                 }
                 sortHole_Tri[num].tris.put(Ts.sortTris.get(numTag).getTag() + numTag, Ts.sortTris.get(numTag));
+                sortHole_Tri[num].sortTris.put(Ts.sortTris.get(numTag).getTag() + numTag, Ts.sortTris.get(numTag));
             }
         }
     }
@@ -430,6 +432,12 @@ public class Model {
     }
 
     public void printHole(){
-        this.Hole_Edge.printTag();
+        //this.Hole_Edge.printTag();
+        this.Hole_Edges.printTag();
+        this.Hole_Tris.print();
+        for(int i=0;i<10;i++){
+            System.out.println("++++ "+i+" ++++");
+            this.sortHole_Tri[i].print();
+        }
     }
 }
