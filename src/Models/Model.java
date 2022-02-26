@@ -118,6 +118,10 @@ public class Model {
             tri.setD(true, num);
             v0.addnearEs(e);//点与边 将e0加入到v1和v0的邻近边集中 在add中同时更新边与边的邻近集合
             v1.addnearEs(e);
+            if(e.getAdjTri()!=null){
+                tri.addhasCommonBorder(e.getAdjTri());
+                e.getAdjTri().addhasCommonBorder(tri);
+            }
 
         } else { //逆序的设置 v1->v0
             e.setAdjTri(tri);
@@ -439,5 +443,24 @@ public class Model {
             System.out.println("++++ "+i+" ++++");
             this.sortHole_Tri[i].print();
         }
+    }
+
+    public void repair(){
+        if(this.Hole_Edge.edges.isEmpty()){
+            return;
+        }
+        for(Edges es:this.Hole_Edges.EDGESs.values()){
+            Vertex center=es.getCenterOfCircle();
+            for(Edge e:es.edges.values()){
+                if(e.getTri()==null){
+                    this.CreateTri(e.getSv(),e.getEv(),center);
+                }else if(e.getAdjTri()==null){
+                    this.CreateTri(e.getEv(),e.getSv(),center);
+                }
+            }
+        }
+        this.setHole();
+        this.deleteTs.tris.clear();
+        //还应该分情况清除deleteTs
     }
 }

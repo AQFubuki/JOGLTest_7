@@ -43,6 +43,7 @@ public class MyListener implements GLEventListener {
     float deltaTime;
 
     boolean startDelete = false;
+    boolean startRepair=false;
 
     @Override
     public void init(GLAutoDrawable glAutoDrawable) {
@@ -82,13 +83,18 @@ public class MyListener implements GLEventListener {
         if (startDelete) {
             System.out.println("delete");
             if (!testModel.Ts.tris.isEmpty() && testModel.deleteTs.tris.isEmpty()) {
-                testModel.addDeleteTs(testModel.Ts.tris.get("9.956773E+01 7.965430E+01 7.003226E+01" +
-                        "1.001268E+02 8.266519E+01 6.974493E+01" +
-                        "9.985004E+01 8.175720E+01 7.163765E+01"));
+                Tri targetT = testModel.Ts.tris.entrySet().iterator().next().getValue();
+                testModel.addDeleteTs(targetT);
             }
             testModel.modelDelete();
             initModel(gl);
             startDelete = false;
+        }
+        if(startRepair){
+            System.out.println("repair");
+            testModel.repair();
+            initModel(gl);
+            startRepair=false;
         }
 
         currentTime = System.currentTimeMillis();
@@ -452,6 +458,11 @@ public class MyListener implements GLEventListener {
     public void deleteTri(int keyCode) {
         if (keyCode == KeyEvent.VK_R) {
             startDelete = true;
+        }
+    }
+    public void repairTri(int keyCode) {
+        if (keyCode == KeyEvent.VK_X) {
+            startRepair = true;
         }
     }
 }

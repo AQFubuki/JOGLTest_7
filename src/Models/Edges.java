@@ -70,4 +70,21 @@ public class Edges {
         }
         return tempEs;
     }
+
+    public Vertex getCenterOfCircle() {
+        double X = 0;
+        double Y=0;
+        double Z=0;
+
+        for (Edge e:this.edges.values()){
+            X+=e.getSv().getX();
+            Y+=e.getSv().getY();
+            Z+=e.getSv().getZ();
+        }
+        X/=this.edges.size();
+        Y/=this.edges.size();
+        Z/=this.edges.size();
+        Vertex centerV=new Vertex(X,Y,Z);
+        return centerV;
+    }
 }

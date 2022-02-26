@@ -128,4 +128,5 @@ public class Tris {
         return this.sortTris.getOrDefault(
                 String.valueOf(this.sortTris.size()-1),new Tri("no tail"));
     }
+
 }

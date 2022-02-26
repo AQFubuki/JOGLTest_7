@@ -25,6 +25,12 @@ public class Vertex {
     public Vertex(String tag) {
         this.set(tag);
     }
+    public Vertex(double X, double Y, double Z) {
+        this.X = X;
+        this.Y = Y;
+        this.Z = Z;
+        this.setT();
+    }
 
     public boolean isEquals(Vertex vertex) {
         return this.isEquals(vertex.getT());
@@ -109,6 +115,11 @@ public class Vertex {
 
     public void setT(String tag) {
         this.tag = tag;
+    }
+
+    public void setT() {
+        this.tag = String.valueOf(this.getX())+" "+String.valueOf(this.getY())+" "+String.valueOf(this.getZ());
+        //留待改成科学计数法
     }
 
     public Tris getnearTs(){

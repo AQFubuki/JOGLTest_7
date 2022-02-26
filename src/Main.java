@@ -102,6 +102,7 @@ public class Main {
                     super.keyPressed(e);
                     myListener.getCamera().moveCamera(e.getKeyCode());
                     myListener.deleteTri(e.getKeyCode());
+                    myListener.repairTri(e.getKeyCode());
 
                 }
             });
