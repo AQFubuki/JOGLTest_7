@@ -19,24 +19,6 @@ public class TRISs {
     public void setTRISs(EDGESs ESs,Tris Ts){
         this.TRISs.clear();
         this.num = 0;
-
-        /**for(Edges es:ESs.EDGESs.values()){
-            Tris tempTs=new Tris();
-            for(Edge e:es.edges.values()){
-                //for(Tri t:Ts.tris.values()){
-                //    if(t.hasEdge(e)){
-                //        tempTs.tris.put(t.getTag(),t);
-                //    }
-               // }
-                Tri t=e.getTri()==null?e.getAdjTri():e.getTri();
-                if(Ts.tris.containsKey(t.getTag())){
-                tempTs.tris.put(t.getTag(),t);
-                tempTs.sortTris.put(,t);
-                }else{System.out.println("ERROR:setTRISs");}
-            }
-            this.TRISs.put(String.valueOf(num++),tempTs);
-        }**/
-
         for(String EsNum:ESs.EDGESs.keySet()){
             Tris tempTs=new Tris();
             Edges es=ESs.EDGESs.get(EsNum);

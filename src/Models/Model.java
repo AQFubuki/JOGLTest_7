@@ -110,7 +110,10 @@ public class Model {
 
     private void CreateEdge(Vertex v0, Vertex v1, Tri tri, int num) {
         Edge e = new Edge();
-        e = Es.edges.getOrDefault(v1.getT() + v0.getT(), new Edge(v0, v1));
+        if(this.Es.edges.containsKey(v0.getT()+v1.getT())){
+            e=Es.edges.get(v0.getT()+v1.getT());
+        }else{
+        e = Es.edges.getOrDefault(v1.getT() + v0.getT(), new Edge(v0, v1));}
 
         if (e.getTag().equals(v0.getT() + v1.getT())) { //正序的设置 v0->v1
             Es.edges.put(e.getTag(), e);//初次创建，加入边的集合

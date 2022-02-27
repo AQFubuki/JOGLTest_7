@@ -1,5 +1,6 @@
 import Models.Model;
 import Models.Tri;
+import Models.Tris;
 import com.jogamp.opengl.*;
 import com.jogamp.opengl.glu.GLU;
 import com.jogamp.opengl.util.GLBuffers;
@@ -13,6 +14,8 @@ import java.io.*;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import static com.jogamp.opengl.GL.*;
 import static com.jogamp.opengl.GL2ES1.GL_PERSPECTIVE_CORRECTION_HINT;
@@ -24,11 +27,15 @@ public class MyListener implements GLEventListener {
     private final IntBuffer TextureName = GLBuffers.newDirectIntBuffer(14);//纹理的buffer
 
     private Models.Model testModel = new Model(System.getProperty("user.dir") + "/src/stl/Twoman.stl");
-    private float frontVers[] = new float[testModel.Ts.tris.size() * 3 * 5];
+    private float frontVers[] = new float[testModel.Ts.tris.size() * 3 * 5];//修补孔洞的时候，数量有可能会超出这个范围
     private float backVers[] = new float[testModel.Ts.tris.size() * 3 * 5];
     private float deleteVers[] = new float[testModel.Ts.tris.size() * 3 * 5];
     private float deleteVersSort[][] = new float[11][testModel.Ts.tris.size() * 3 * 5];
     private float hole_Tri[][] = new float[10][testModel.Ts.tris.size() * 3 * 5];
+
+    private ArrayList<Float> FrontVers=new ArrayList<Float>();//改用List动态存储，再临时改成数组
+    private ArrayList<Float> BackVers=new ArrayList<Float>();
+    private HashMap<Integer,ArrayList<Float>>HoleVers=new HashMap<Integer, ArrayList<Float>>();
 
     private int program;
     private GLU glu;
@@ -43,7 +50,7 @@ public class MyListener implements GLEventListener {
     float deltaTime;
 
     boolean startDelete = false;
-    boolean startRepair=false;
+    boolean startRepair = false;
 
     @Override
     public void init(GLAutoDrawable glAutoDrawable) {
@@ -90,11 +97,11 @@ public class MyListener implements GLEventListener {
             initModel(gl);
             startDelete = false;
         }
-        if(startRepair){
+        if (startRepair) {
             System.out.println("repair");
             testModel.repair();
             initModel(gl);
-            startRepair=false;
+            startRepair = false;
         }
 
         currentTime = System.currentTimeMillis();
@@ -145,15 +152,23 @@ public class MyListener implements GLEventListener {
         //设置VAO和VBO
         gl.glGenVertexArrays(Data.VAONum, ArrayName);
         gl.glGenBuffers(Data.VBONum, BufferName);
-        initBuffer(11, frontVers, gl);//设置前面
-        initBuffer(12, backVers, gl);//设置背面
+        initBuffer(11, FrontVers, gl);//设置前面
+        initBuffer(12, BackVers, gl);//设置背面
         initBuffer(13, deleteVers, gl);//设置删除面
         for (int i = 0; i < 11; i++) {
             initBuffer(i, deleteVersSort[i], gl);
         }
         for (int i = 14; i < 24; i++) {
-            initBuffer(i, hole_Tri[i - 14], gl);
+            initBuffer(i, HoleVers.get(i-14), gl);
         }
+    }
+    private void initBuffer(int num,ArrayList<Float> VersList,GL3 gl) {
+        if (VersList == null) return;
+        float Vers[] = new float[VersList.size()];
+        for (int i = 0, length = VersList.size(); i < length; i++) {
+            Vers[i] = VersList.get(i);
+        }
+        this.initBuffer(num, Vers, gl);
     }
 
     private void initBuffer(int num, float[] Vers, GL3 gl) {
@@ -303,59 +318,60 @@ public class MyListener implements GLEventListener {
     }
 
     private void initFrontVers() {
-        ArrayList<Float> frontV = new ArrayList<>();
-        for (Tri tempT : testModel.Ts.tris.values()) {
-            frontV.add((float) ((tempT.getV0().getX() - 70) * 0.05));
-            frontV.add((float) ((tempT.getV0().getY() - 70) * 0.05));
-            frontV.add((float) ((tempT.getV0().getZ() - 70) * 0.05));
-            frontV.add(0.0f);
-            frontV.add(0.0f);
+        initVers(FrontVers,testModel.Ts);
+        //ArrayList<Float> frontV = new ArrayList<>();
+        /**for (Tri tempT : testModel.Ts.tris.values()) {
+            FrontVers.add((float) ((tempT.getV0().getX() - 70) * 0.05));
+            FrontVers.add((float) ((tempT.getV0().getY() - 70) * 0.05));
+            FrontVers.add((float) ((tempT.getV0().getZ() - 70) * 0.05));
+            FrontVers.add(0.0f);
+            FrontVers.add(0.0f);
 
-            frontV.add((float) ((tempT.getV1().getX() - 70) * 0.05));
-            frontV.add((float) ((tempT.getV1().getY() - 70) * 0.05));
-            frontV.add((float) ((tempT.getV1().getZ() - 70) * 0.05));
-            frontV.add(1.0f);
-            frontV.add(0.0f);
+            FrontVers.add((float) ((tempT.getV1().getX() - 70) * 0.05));
+            FrontVers.add((float) ((tempT.getV1().getY() - 70) * 0.05));
+            FrontVers.add((float) ((tempT.getV1().getZ() - 70) * 0.05));
+            FrontVers.add(1.0f);
+            FrontVers.add(0.0f);
 
-            frontV.add((float) ((tempT.getV2().getX() - 70) * 0.05));
-            frontV.add((float) ((tempT.getV2().getY() - 70) * 0.05));
-            frontV.add((float) ((tempT.getV2().getZ() - 70) * 0.05));
-            frontV.add(0.5f);
-            frontV.add(1.0f);
+            FrontVers.add((float) ((tempT.getV2().getX() - 70) * 0.05));
+            FrontVers.add((float) ((tempT.getV2().getY() - 70) * 0.05));
+            FrontVers.add((float) ((tempT.getV2().getZ() - 70) * 0.05));
+            FrontVers.add(0.5f);
+            FrontVers.add(1.0f);
         }
         for (int i = 0; i < testModel.Ts.tris.size() * 3 * 5; i++) {
-            frontVers[i] = frontV.get(i);
-        }
+            frontVers[i] = FrontVers.get(i);
+        }**/
     }
 
     private void initBackVers() {
-        ArrayList<Float> backV = new ArrayList<Float>();
+        //initVers(BackVers,testModel.Ts); //方向不一致，无法共用此方法
+        //ArrayList<Float> backV = new ArrayList<Float>();
+        BackVers.clear();
         for (Tri tempT : testModel.Ts.tris.values()) {
-            backV.add((float) ((tempT.getV2().getX() - 70) * 0.05));
-            backV.add((float) ((tempT.getV2().getY() - 70) * 0.05));
-            backV.add((float) ((tempT.getV2().getZ() - 70) * 0.05));
-            backV.add(0.5f);
-            backV.add(1.0f);
+         BackVers.add((float) ((tempT.getV2().getX() - 70) * 0.05));
+         BackVers.add((float) ((tempT.getV2().getY() - 70) * 0.05));
+         BackVers.add((float) ((tempT.getV2().getZ() - 70) * 0.05));
+         BackVers.add(0.5f);
+         BackVers.add(1.0f);
 
-            backV.add((float) ((tempT.getV1().getX() - 70) * 0.05));
-            backV.add((float) ((tempT.getV1().getY() - 70) * 0.05));
-            backV.add((float) ((tempT.getV1().getZ() - 70) * 0.05));
-            backV.add(1.0f);
-            backV.add(0.0f);
+         BackVers.add((float) ((tempT.getV1().getX() - 70) * 0.05));
+         BackVers.add((float) ((tempT.getV1().getY() - 70) * 0.05));
+         BackVers.add((float) ((tempT.getV1().getZ() - 70) * 0.05));
+         BackVers.add(1.0f);
+         BackVers.add(0.0f);
 
-            backV.add((float) ((tempT.getV0().getX() - 70) * 0.05));
-            backV.add((float) ((tempT.getV0().getY() - 70) * 0.05));
-            backV.add((float) ((tempT.getV0().getZ() - 70) * 0.05));
-            backV.add(0.0f);
-            backV.add(0.0f);
+         BackVers.add((float) ((tempT.getV0().getX() - 70) * 0.05));
+         BackVers.add((float) ((tempT.getV0().getY() - 70) * 0.05));
+         BackVers.add((float) ((tempT.getV0().getZ() - 70) * 0.05));
+         BackVers.add(0.0f);
+         BackVers.add(0.0f);
 
         }
 
-        for (int i = 0; i < testModel.Ts.tris.size() * 3 * 5; i++) {
-            backVers[i] = backV.get(i);
-        }
-
-
+        //for (int i = 0; i < testModel.Ts.tris.size() * 3 * 5; i++) {
+          //  backVers[i] = BackVers.get(i);
+        //}
     }
 
     private void initDeleteVers() {
@@ -420,34 +436,59 @@ public class MyListener implements GLEventListener {
 
     private void initHoleEdge() {
         for (int i = 0; i < 10; i++) {
-            initHoleEfgeSort(i);
+            //initHoleEfgeSort(i);
+            this.HoleVers.put(i,new ArrayList<Float>());
+            initVers(this.HoleVers.get(i), this.testModel.sortHole_Tri[i]);
         }
     }
 
     private void initHoleEfgeSort(int num) {
-        ArrayList<Float> deleteV = new ArrayList<Float>();
+        //ArrayList<Float> deleteV = new ArrayList<Float>();
         for (Tri tempT : testModel.sortHole_Tri[num].tris.values()) {
-            deleteV.add((float) ((tempT.getV0().getX() - 70) * 0.05));
-            deleteV.add((float) ((tempT.getV0().getY() - 70) * 0.05));
-            deleteV.add((float) ((tempT.getV0().getZ() - 70) * 0.05));
-            deleteV.add(0.5f);
-            deleteV.add(1.0f);
+            HoleVers.get(num).add((float) ((tempT.getV0().getX() - 70) * 0.05));
+            HoleVers.get(num).add((float) ((tempT.getV0().getY() - 70) * 0.05));
+            HoleVers.get(num).add((float) ((tempT.getV0().getZ() - 70) * 0.05));
+            HoleVers.get(num).add(0.5f);
+            HoleVers.get(num).add(1.0f);
 
-            deleteV.add((float) ((tempT.getV1().getX() - 70) * 0.05));
-            deleteV.add((float) ((tempT.getV1().getY() - 70) * 0.05));
-            deleteV.add((float) ((tempT.getV1().getZ() - 70) * 0.05));
-            deleteV.add(1.0f);
-            deleteV.add(0.0f);
+            HoleVers.get(num).add((float) ((tempT.getV1().getX() - 70) * 0.05));
+            HoleVers.get(num).add((float) ((tempT.getV1().getY() - 70) * 0.05));
+            HoleVers.get(num).add((float) ((tempT.getV1().getZ() - 70) * 0.05));
+            HoleVers.get(num).add(1.0f);
+            HoleVers.get(num).add(0.0f);
 
-            deleteV.add((float) ((tempT.getV2().getX() - 70) * 0.05));
-            deleteV.add((float) ((tempT.getV2().getY() - 70) * 0.05));
-            deleteV.add((float) ((tempT.getV2().getZ() - 70) * 0.05));
-            deleteV.add(0.0f);
-            deleteV.add(0.0f);
+            HoleVers.get(num).add((float) ((tempT.getV2().getX() - 70) * 0.05));
+            HoleVers.get(num).add((float) ((tempT.getV2().getY() - 70) * 0.05));
+            HoleVers.get(num).add((float) ((tempT.getV2().getZ() - 70) * 0.05));
+            HoleVers.get(num).add(0.0f);
+            HoleVers.get(num).add(0.0f);
 
         }
         for (int i = 0; i < testModel.sortHole_Tri[num].tris.size() * 3 * 5; i++) {
-            hole_Tri[num][i] = deleteV.get(i);
+            hole_Tri[num][i] = HoleVers.get(num).get(i);
+        }
+    }
+
+    private void initVers(ArrayList<Float> VersList, Tris Ts){
+        VersList.clear();
+        for (Tri tempT : Ts.tris.values()) {
+            VersList.add((float) ((tempT.getV0().getX() - 70) * 0.05));
+            VersList.add((float) ((tempT.getV0().getY() - 70) * 0.05));
+            VersList.add((float) ((tempT.getV0().getZ() - 70) * 0.05));
+            VersList.add(0.0f);
+            VersList.add(0.0f);
+
+            VersList.add((float) ((tempT.getV1().getX() - 70) * 0.05));
+            VersList.add((float) ((tempT.getV1().getY() - 70) * 0.05));
+            VersList.add((float) ((tempT.getV1().getZ() - 70) * 0.05));
+            VersList.add(1.0f);
+            VersList.add(0.0f);
+
+            VersList.add((float) ((tempT.getV2().getX() - 70) * 0.05));
+            VersList.add((float) ((tempT.getV2().getY() - 70) * 0.05));
+            VersList.add((float) ((tempT.getV2().getZ() - 70) * 0.05));
+            VersList.add(0.5f);
+            VersList.add(1.0f);
         }
     }
 
@@ -460,6 +501,7 @@ public class MyListener implements GLEventListener {
             startDelete = true;
         }
     }
+
     public void repairTri(int keyCode) {
         if (keyCode == KeyEvent.VK_X) {
             startRepair = true;

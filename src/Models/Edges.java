@@ -77,13 +77,13 @@ public class Edges {
         double Z=0;
 
         for (Edge e:this.edges.values()){
-            X+=e.getSv().getX();
-            Y+=e.getSv().getY();
-            Z+=e.getSv().getZ();
+            X+=e.getSv().getX()+e.getEv().getX();
+            Y+=e.getSv().getY()+e.getEv().getY();
+            Z+=e.getSv().getZ()+e.getEv().getZ();
         }
-        X/=this.edges.size();
-        Y/=this.edges.size();
-        Z/=this.edges.size();
+        X/=this.edges.size()*2;
+        Y/=this.edges.size()*2;
+        Z/=this.edges.size()*2;
         Vertex centerV=new Vertex(X,Y,Z);
         return centerV;
     }
