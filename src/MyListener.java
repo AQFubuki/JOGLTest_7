@@ -53,6 +53,7 @@ public class MyListener implements GLEventListener {
 
     boolean startDelete = false;
     boolean startRepair = false;
+    boolean selectChange=false;
 
     int time=0;
 
@@ -108,7 +109,10 @@ public class MyListener implements GLEventListener {
             initModel(gl);
             startRepair = false;
         }
+        if(selectChange){
         initModel(gl);
+        selectChange=false;
+        }
         //System.out.println(time++);
         currentTime = System.currentTimeMillis();
         deltaTime = currentTime - lastTime;
@@ -521,10 +525,12 @@ public class MyListener implements GLEventListener {
         if(this.testModel.Ts.tris.containsKey(name)){
             initSelect(this.testModel.Ts.tris.get(name));
             selectTri=this.testModel.Ts.tris.get(name);
+            selectChange=true;
             System.out.println(name);
         }else{
             System.out.println("NO SELECTCHANGE");
         }
+
     }
 
     private void initSelect(Tri tri) {
