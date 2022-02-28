@@ -76,9 +76,9 @@ public class Model {
     }
 
     public void CreateTri(Vertex v0, Vertex v1, Vertex v2) {
-        Vs.vertexs.put(v0.getT(), v0);
-        Vs.vertexs.put(v1.getT(), v1);
-        Vs.vertexs.put(v2.getT(), v2);
+        Vs.vertexs.put(v0.getTag(), v0);
+        Vs.vertexs.put(v1.getTag(), v1);
+        Vs.vertexs.put(v2.getTag(), v2);
         //三个点互相加入邻近点集中 点与点
         v0.addnearVs(v1);
         v0.addnearVs(v2);
@@ -104,18 +104,18 @@ public class Model {
         CreateEdge(v2, v0, tri, 2);
 
         //将创建好的面添加进面集合中
-        String triTag = v0.getT() + v1.getT() + v2.getT();
+        String triTag = v0.getTag() + v1.getTag() + v2.getTag();
         Ts.tris.put(triTag, tri);
     }
 
     private void CreateEdge(Vertex v0, Vertex v1, Tri tri, int num) {
         Edge e = new Edge();
-        if(this.Es.edges.containsKey(v0.getT()+v1.getT())){
-            e=Es.edges.get(v0.getT()+v1.getT());
+        if(this.Es.edges.containsKey(v0.getTag()+v1.getTag())){
+            e=Es.edges.get(v0.getTag()+v1.getTag());
         }else{
-        e = Es.edges.getOrDefault(v1.getT() + v0.getT(), new Edge(v0, v1));}
+        e = Es.edges.getOrDefault(v1.getTag() + v0.getTag(), new Edge(v0, v1));}
 
-        if (e.getTag().equals(v0.getT() + v1.getT())) { //正序的设置 v0->v1
+        if (e.getTag().equals(v0.getTag() + v1.getTag())) { //正序的设置 v0->v1
             Es.edges.put(e.getTag(), e);//初次创建，加入边的集合
             e.setTri(tri);
             tri.setD(true, num);
@@ -315,8 +315,8 @@ public class Model {
         //解除两点之间的关系
         //System.out.println("SV:" + e.getSv().getT());
         //System.out.println("EV:" + e.getEv().getT());
-        e.getEv().nearVs.vertexs.remove(e.getSv().getT());
-        e.getSv().nearVs.vertexs.remove(e.getEv().getT());
+        e.getEv().nearVs.vertexs.remove(e.getSv().getTag());
+        e.getSv().nearVs.vertexs.remove(e.getEv().getTag());
         //删除邻近边关系
         for (Edge tempE : e.getEv().nearEs.edges.values()) {
             tempE.nearEs.edges.remove(e.getTag());

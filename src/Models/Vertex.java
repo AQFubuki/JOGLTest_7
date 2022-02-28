@@ -33,18 +33,18 @@ public class Vertex {
     }
 
     public boolean isEquals(Vertex vertex) {
-        return this.isEquals(vertex.getT());
+        return this.isEquals(vertex.getTag());
     }
 
     public boolean isEquals(String tag) {
-        if (this.getT().equals(tag)) {
+        if (this.getTag().equals(tag)) {
             return true;
         }
         return false;
     }
 
     public void addnearVs(Vertex v) {
-        this.nearVs.vertexs.put(v.getT(), v);
+        this.nearVs.vertexs.put(v.getTag(), v);
     }
 
     public void addnearEs(Edge e) {
@@ -62,7 +62,7 @@ public class Vertex {
 
     public void shownearVs(){
         for(Vertex v:nearVs.vertexs.values()){
-            System.out.println(v.getT());
+            System.out.println(v.getTag());
         }
     }
 
@@ -109,7 +109,7 @@ public class Vertex {
         this.Z = z;
     }
 
-    public String getT() {
+    public String getTag() {
         return tag;
     }
 
@@ -164,7 +164,7 @@ public class Vertex {
         nearVs.printTag();
     }
     public void printTag() {
-        System.out.println(this.getT());
+        System.out.println(this.getTag());
     }
 
 }

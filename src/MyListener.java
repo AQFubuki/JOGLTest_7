@@ -24,9 +24,11 @@ public class MyListener implements GLEventListener {
 
     private final IntBuffer ArrayName = GLBuffers.newDirectIntBuffer(Data.VAONum);//VAO的buffer
     private final IntBuffer BufferName = GLBuffers.newDirectIntBuffer(Data.VBONum);//VBO的buffer
-    private final IntBuffer TextureName = GLBuffers.newDirectIntBuffer(14);//纹理的buffer
+    private final IntBuffer TextureName = GLBuffers.newDirectIntBuffer(15);//纹理的buffer
 
-    private Models.Model testModel = new Model(System.getProperty("user.dir") + "/src/stl/Twoman.stl");
+    private float selectVer[]=new float[1*3*5];//选中的三角
+    private Tri selectTri=new Tri("no Tri");
+    public Models.Model testModel = new Model(System.getProperty("user.dir") + "/src/stl/Twoman.stl");
     private float frontVers[] = new float[testModel.Ts.tris.size() * 3 * 5];//修补孔洞的时候，数量有可能会超出这个范围
     private float backVers[] = new float[testModel.Ts.tris.size() * 3 * 5];
     private float deleteVers[] = new float[testModel.Ts.tris.size() * 3 * 5];
@@ -52,6 +54,8 @@ public class MyListener implements GLEventListener {
     boolean startDelete = false;
     boolean startRepair = false;
 
+    int time=0;
+
     @Override
     public void init(GLAutoDrawable glAutoDrawable) {
         GL3 gl = glAutoDrawable.getGL().getGL3();//获取OpenGL上下文
@@ -73,6 +77,7 @@ public class MyListener implements GLEventListener {
         initFrontVers();
         initBackVers();
         //initDeleteVers();
+        initSelect(selectTri);
         initHoleEdge();
         initBuffer(gl);
     }
@@ -89,9 +94,9 @@ public class MyListener implements GLEventListener {
 
         if (startDelete) {
             System.out.println("delete");
-            if (!testModel.Ts.tris.isEmpty() && testModel.deleteTs.tris.isEmpty()) {
-                Tri targetT = testModel.Ts.tris.entrySet().iterator().next().getValue();
-                testModel.addDeleteTs(targetT);
+            if (!testModel.Ts.tris.isEmpty() && testModel.deleteTs.tris.isEmpty() && testModel.Ts.tris.containsKey(selectTri.getTag())) {
+                //Tri targetT = testModel.Ts.tris.entrySet().iterator().next().getValue();
+                testModel.addDeleteTs(selectTri);
             }
             testModel.modelDelete();
             initModel(gl);
@@ -103,7 +108,8 @@ public class MyListener implements GLEventListener {
             initModel(gl);
             startRepair = false;
         }
-
+        initModel(gl);
+        //System.out.println(time++);
         currentTime = System.currentTimeMillis();
         deltaTime = currentTime - lastTime;
         camera.setSpeed(deltaTime * 0.015f);
@@ -129,6 +135,7 @@ public class MyListener implements GLEventListener {
         for (int i = 0; i < 10; i++) {
             Draw(i + 14, i, testModel.sortHole_Tri[i].tris.size(), gl);
         }
+        Draw(24,14,1,gl);
     }
 
     private void Draw(int i, int size, GL3 gl) {
@@ -161,6 +168,7 @@ public class MyListener implements GLEventListener {
         for (int i = 14; i < 24; i++) {
             initBuffer(i, HoleVers.get(i-14), gl);
         }
+        initBuffer(24,selectVer,gl);
     }
     private void initBuffer(int num,ArrayList<Float> VersList,GL3 gl) {
         if (VersList == null) return;
@@ -263,7 +271,7 @@ public class MyListener implements GLEventListener {
 
     private void initTexture(GL3 gl) {
         try {
-            gl.glGenTextures(14, TextureName);//生成纹理
+            gl.glGenTextures(15, TextureName);//生成纹理
             for (int i = 0; i < 10; i++) {
                 initTexture(i, "/src/image/numberTexture/SORT-" + String.valueOf(i) + ".png", "png", gl);
             }
@@ -271,6 +279,7 @@ public class MyListener implements GLEventListener {
             initTexture(11, "/src/image/pink.jpg", "jpg", gl);
             initTexture(12, "/src/image/blue.jpg", "jpg", gl);
             initTexture(13, "/src/image/temp1.jpg", "jpg", gl);
+            initTexture(14, "/src/image/wo.jpg", "jpg", gl);
             gl.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
             gl.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
             gl.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -506,5 +515,41 @@ public class MyListener implements GLEventListener {
         if (keyCode == KeyEvent.VK_X) {
             startRepair = true;
         }
+    }
+
+    public void selectChange(String name) {
+        if(this.testModel.Ts.tris.containsKey(name)){
+            initSelect(this.testModel.Ts.tris.get(name));
+            selectTri=this.testModel.Ts.tris.get(name);
+            System.out.println(name);
+        }else{
+            System.out.println("NO SELECTCHANGE");
+        }
+    }
+
+    private void initSelect(Tri tri) {
+        if(tri.getTag()=="no Tri") return;
+        if(!this.testModel.Ts.tris.containsKey(tri.getTag())){
+            for(int i=0;i<15;i++){
+                selectVer[i]=0.0f;
+            }
+        }
+        selectVer[0]=((float) ((tri.getV0().getX() - 70) * 0.05));
+        selectVer[1]=((float) ((tri.getV0().getY() - 70) * 0.05));
+        selectVer[2]=((float) ((tri.getV0().getZ() - 70) * 0.05));
+        selectVer[3]=(0.0f);
+        selectVer[4]=(0.0f);
+
+        selectVer[5]=((float) ((tri.getV1().getX() - 70) * 0.05));
+        selectVer[6]=((float) ((tri.getV1().getY() - 70) * 0.05));
+        selectVer[7]=((float) ((tri.getV1().getZ() - 70) * 0.05));
+        selectVer[8]=(1.0f);
+        selectVer[9]=(0.0f);
+
+        selectVer[10]=((float) ((tri.getV2().getX() - 70) * 0.05));
+        selectVer[11]=((float) ((tri.getV2().getY() - 70) * 0.05));
+        selectVer[12]=((float) ((tri.getV2().getZ() - 70) * 0.05));
+        selectVer[13]=(0.5f);
+        selectVer[14]=(1.0f);
     }
 }

@@ -16,7 +16,7 @@ public class Edge {
     public Edge(Vertex sv, Vertex ev) {
         this.sv = sv;
         this.ev = ev;
-        this.tag = sv.getT() + ev.getT();
+        this.tag = sv.getTag() + ev.getTag();
     }
     public Edge(String tag){
         this.setTag(tag);
@@ -103,8 +103,8 @@ public class Edge {
     public void print(){
         System.out.println("EdgeTag:");
         this.printTag();
-        System.out.println("sv:"+sv.getT());
-        System.out.println("ev:"+ev.getT());
+        System.out.println("sv:"+sv.getTag());
+        System.out.println("ev:"+ev.getTag());
         if(Tri!=null){
             System.out.println("Tri:"+Tri.getTag());
         }else{System.out.println("Tri:null");}

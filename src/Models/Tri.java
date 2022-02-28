@@ -5,8 +5,8 @@ public class Tri {
     protected Edge[] e = new Edge[3];
     protected boolean[] d = new boolean[3];
     protected String tag;
-    protected Tris hasCommonPoint = new Tris();
-    protected Tris hasCommonBorder=new Tris();
+    public Tris hasCommonPoint = new Tris();
+    public Tris hasCommonBorder=new Tris();
 
     public Tri() {
     }
@@ -15,7 +15,7 @@ public class Tri {
         setV0(v0);
         setV1(v1);
         setV2(v2);
-        setTag(v0.getT() + v1.getT() + v2.getT());
+        setTag(v0.getTag() + v1.getTag() + v2.getTag());
     }
 
     public Tri(String tag) {
@@ -154,9 +154,9 @@ public class Tri {
         +"  "+this.getE1().getTag()+" "+this.getD1()
         +"  "+this.getE2().getTag()+" "+this.getD2());
         System.out.println("VertexTag:");
-        System.out.println(this.getV0().getT()+" "+
-        this.getV1().getT()+" "+
-        this.getV2().getT());
+        System.out.println(this.getV0().getTag()+" "+
+        this.getV1().getTag()+" "+
+        this.getV2().getTag());
     }
 
     public void printnearTris(){
