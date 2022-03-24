@@ -31,7 +31,8 @@ public class SwingFrame {
             //创建树形展示结构
 
             //JPanel TriTreePanel=new JPanel();
-            Box TreeBox=Box.createVerticalBox();
+            //Box TreeBox=Box.createVerticalBox();
+            DefaultMutableTreeNode Root=new DefaultMutableTreeNode();
             DefaultTreeCellRenderer renderer=new DefaultTreeCellRenderer();
             renderer.setFont(new Font("StSong",Font.BOLD,25));
             DefaultTreeSelectionModel selectionModel=new DefaultTreeSelectionModel();
@@ -40,27 +41,28 @@ public class SwingFrame {
             for(Tri tri:myListener.testModel.Ts.tris.values()){
                 //创建DefaultMutableTreeNode对象代表结点
                 DefaultMutableTreeNode TriRoot=this.initTriTree(tri);
-                //创建JTree对象
-                JTree TriTree=new JTree(TriRoot);
-                TriTree.setCellRenderer(renderer);
-                TriTree.setSelectionModel(selectionModel);
-                TriTree.addTreeSelectionListener(new TreeSelectionListener() {
-                    @Override
-                    public void valueChanged(TreeSelectionEvent e) {
-                        DefaultMutableTreeNode note=
-                                (DefaultMutableTreeNode)TriTree.getLastSelectedPathComponent();
-                        String name=note.toString();
-                        myListener.selectChange(name);
-                    }
-                });
-                //TriTreePanel.add(TriTree);
-                TreeBox.add(new JScrollPane((TriTree)));
+                Root.add(TriRoot);
             }
+            //创建JTree对象
+            JTree TriTree=new JTree(Root);
+            TriTree.setCellRenderer(renderer);
+            TriTree.setSelectionModel(selectionModel);
+            TriTree.addTreeSelectionListener(new TreeSelectionListener() {
+                @Override
+                public void valueChanged(TreeSelectionEvent e) {
+                    DefaultMutableTreeNode note=
+                            (DefaultMutableTreeNode)TriTree.getLastSelectedPathComponent();
+                    String name=note.toString();
+                    myListener.selectChange(name);
+                }
+            });
+            //TriTreePanel.add(TriTree);
+            //TreeBox.add(new JScrollPane((TriTree)));
             //TriTreePanel.setLayout(new BoxLayout(TriTreePanel,BoxLayout.Y_AXIS));
 
 
             //设置分隔条
-            JSplitPane MainJSP=new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,canvas,new JScrollPane(TreeBox));//左边为画布，右边为功能区
+            JSplitPane MainJSP=new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,canvas,new JScrollPane(TriTree));//左边为画布，右边为功能区
             MainJSP.setOneTouchExpandable(true);//一触即展
             MainJSP.setContinuousLayout(true);//连续布局
             MainJSP.setDividerLocation(1200);//设置初始位置

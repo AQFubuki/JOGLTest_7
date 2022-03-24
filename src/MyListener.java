@@ -189,7 +189,12 @@ public class MyListener implements GLEventListener {
         gl.glBindBuffer(GL.GL_ARRAY_BUFFER, BufferName.get(num));
         gl.glBufferData(GL.GL_ARRAY_BUFFER,
                 VertexBuffer.capacity() * Float.BYTES,
-                VertexBuffer, GL.GL_STATIC_DRAW);
+                VertexBuffer, GL.GL_DYNAMIC_DRAW);
+        /**
+         * GL_STATIC_DRAW ：数据不会或几乎不会改变。
+         * GL_DYNAMIC_DRAW：数据会被改变很多。
+         * GL_STREAM_DRAW ：数据每次绘制时都会改变。
+         **/
         gl.glEnableVertexAttribArray(0);//通道0读取顶点坐标
         gl.glVertexAttribPointer(0, 3, GL_FLOAT, false, 5 * Float.BYTES, 0);
         gl.glEnableVertexAttribArray(1);//通道1读取纹理坐标

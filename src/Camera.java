@@ -7,7 +7,7 @@ import java.awt.event.KeyEvent;
 public class Camera {
 
     public glm.vec._3.Vec3 Position = new Vec3(1.0f);
-    public glm.vec._3.Vec3 Forward = new Vec3(1.0f);
+    public glm.vec._3.Vec3 Direction = new Vec3(1.0f);
     public glm.vec._3.Vec3 Right = new Vec3(1.0f);
     public glm.vec._3.Vec3 Up = new Vec3(1.0f);
     public glm.vec._3.Vec3 Worldup = new Vec3(1.0f);
@@ -29,20 +29,20 @@ public class Camera {
         Mat4 result = new Mat4();
         Vec3 center = new Vec3();
         //glm.Glm.add(Position,Forward.x,Forward.y,Forward.z,center);
-        glm.vec._3.Vec3.add(Position, Forward.x, Forward.y, Forward.z, center);
+        glm.vec._3.Vec3.add(Position, Direction.x, Direction.y, Direction.z, center);
         glm.glm.lookAt(Position, center, Worldup, result);
 
         return result;
     }
 
     private void changeViewMatrix() {
-        Forward.x = (float) (Math.cos(Pitch) * Math.sin(Yaw));
-        Forward.y = (float) Math.sin(Pitch);
-        Forward.z = (float) (Math.cos(Pitch) * Math.cos(Yaw));
+        Direction.x = (float) (Math.cos(Pitch) * Math.sin(Yaw));
+        Direction.y = (float) Math.sin(Pitch);
+        Direction.z = (float) (Math.cos(Pitch) * Math.cos(Yaw));
         //Right = glm.vec._3.Vec3.cross(Forward, Worldup, Right);
         //Right = MyUtil.normalize(Right);//单位化
-        Right = MyUtil.normalize(glm.vec._3.Vec3.cross(Forward, Worldup, Right));
-        Up = MyUtil.normalize(glm.vec._3.Vec3.cross(Forward, Right, Up));
+        Right = MyUtil.normalize(glm.vec._3.Vec3.cross(Direction, Worldup, Right));
+        Up = MyUtil.normalize(glm.vec._3.Vec3.cross(Direction, Right, Up));
 
     }
 
@@ -56,11 +56,11 @@ public class Camera {
         Vec3 change = new Vec3(1.0f);
         switch (command) {
             case KeyEvent.VK_W://前进
-                change.set(Forward.x * speed, Forward.y * speed, Forward.z * speed);
+                change.set(Direction.x * speed, Direction.y * speed, Direction.z * speed);
                 Vec3.add(Position, change.x, change.y, change.z, Position);
                 break;
             case KeyEvent.VK_S://后退
-                change.set(Forward.x * speed, Forward.y * speed, Forward.z * speed);
+                change.set(Direction.x * speed, Direction.y * speed, Direction.z * speed);
                 Vec3.add(Position, -change.x, -change.y, -change.z, Position);
                 break;
             case KeyEvent.VK_A://左
