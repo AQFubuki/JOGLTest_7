@@ -1,47 +1,30 @@
 import Models.Model;
 import Models.Tri;
 import Models.Vertex;
+import Utility.MyUtil;
 
 public class deleteTest {
     public void deleteTest(){
         Model testModel=new Model();
-        Vertex A=new Vertex("A",true);
-        Vertex B=new Vertex("B",true);
-        Vertex C=new Vertex("C",true);
-        Vertex D=new Vertex("D",true);
-        Vertex E=new Vertex("E",true);
-        Vertex F=new Vertex("F",true);
-        Vertex G=new Vertex("G",true);
-        Vertex H=new Vertex("H",true);
-        Vertex A1=new Vertex("A1",true);
-        Vertex B1=new Vertex("B1",true);
-        Vertex C1=new Vertex("C1",true);
-        Vertex D1=new Vertex("D1",true);
-        Vertex E1=new Vertex("E1",true);
-        Vertex F1=new Vertex("F1",true);
-        Vertex G1=new Vertex("G1",true);
-        Vertex H1=new Vertex("H1",true);
-        testModel.CreateTri(A,B,C);
-        testModel.CreateTri(B,A,D);
-        testModel.CreateTri(D,A,E);
-        testModel.CreateTri(A,C,E);
-        testModel.CreateTri(E,C,H);
-        testModel.CreateTri(H,C,G);
-        testModel.CreateTri(G,C,B);
-        testModel.CreateTri(G,B,F);
-        testModel.CreateTri(F,B,D);
+        Vertex v0=new Vertex(0.0f,0.0f,0.0f);
+        Vertex v1=new Vertex(1.0f,-6.0f,-31.0f);
+        Vertex v2=new Vertex(4.0f,5.0f,21.0f);
+        Vertex v3=new Vertex(2.0f,7.0f,33.0f);
+        //z=-x+5y+0
+        testModel.Hole_Vers.vertexs.put(v0.getTag(),v0);
+        testModel.Hole_Vers.vertexs.put(v1.getTag(),v1);
+        testModel.Hole_Vers.vertexs.put(v2.getTag(),v2);
+        testModel.Hole_Vers.vertexs.put(v2.getTag(),v3);
+        Vertex temp= MyUtil.getPlaneFittingPoint(MyUtil.planeFitting(testModel.Hole_Vers)[0],
+        MyUtil.planeFitting(testModel.Hole_Vers)[1],MyUtil.planeFitting(testModel.Hole_Vers)[2],v3);
+        System.out.println(temp.getX()+" "+ temp.getY()+" "+temp.getZ());
+        System.out.println(MyUtil.planeFitting(testModel.Hole_Vers)[0]+" "
+                + MyUtil.planeFitting(testModel.Hole_Vers)[1]+" "
+                +MyUtil.planeFitting(testModel.Hole_Vers)[2]);
 
-        testModel.CreateTri(A1,B1,C1);
-        testModel.CreateTri(B1,A1,D1);
-        testModel.CreateTri(D1,A1,E1);
-        testModel.CreateTri(A1,C1,E1);
-        testModel.CreateTri(E1,C1,H1);
-        testModel.CreateTri(H1,C1,G1);
-        testModel.CreateTri(G1,C1,B1);
-        testModel.CreateTri(G1,B1,F1);
-        testModel.CreateTri(F1,B1,D1);
-
-        testModel.setHole();
-        testModel.printHole();
+        //0.0 0.0 -3.269230769230769
+        //1.0 1.0 -1.3076923076923075
+        //4.0 4.0 4.5769230769230775
+        //0.5448717948717948 1.4166666666666667 -3.269230769230769
     }
 }

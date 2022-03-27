@@ -24,6 +24,7 @@ public class Model {
 
     public Edges Hole_Edge = new Edges();
     public EDGESs Hole_Edges = new EDGESs();
+    public Vertexs Hole_Vers=new Vertexs();
 
     public Model() {
     }
@@ -353,9 +354,12 @@ public class Model {
     public void setHole() {
         this.Hole_Tri.tris.clear();
         this.Hole_Edge.edges.clear();
+        this.Hole_Vers.vertexs.clear();
         for (Edge edge : this.Es.edges.values()) {
             if (edge.isHole()) {
                 this.Hole_Edge.edges.put(edge.getTag(), edge);
+                this.Hole_Vers.vertexs.put(edge.getEv().getTag(),edge.getEv());
+                this.Hole_Vers.vertexs.put(edge.getSv().getTag(),edge.getSv());
                 Tri tri = new Tri();
                 if (edge.getTri() != null) {
                     tri = edge.getTri();

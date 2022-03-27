@@ -1,6 +1,8 @@
 import Models.Model;
 import Models.Tri;
 import Models.Tris;
+import Models.Vertex;
+import Utility.MyUtil;
 import com.jogamp.opengl.*;
 import com.jogamp.opengl.glu.GLU;
 import com.jogamp.opengl.util.GLBuffers;
@@ -18,25 +20,27 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static com.jogamp.opengl.GL.*;
-import static com.jogamp.opengl.GL2ES1.GL_PERSPECTIVE_CORRECTION_HINT;
+import static com.jogamp.opengl.GL2ES1.*;
 
 public class MyListener implements GLEventListener {
 
     private final IntBuffer ArrayName = GLBuffers.newDirectIntBuffer(Data.VAONum);//VAO的buffer
     private final IntBuffer BufferName = GLBuffers.newDirectIntBuffer(Data.VBONum);//VBO的buffer
-    private final IntBuffer TextureName = GLBuffers.newDirectIntBuffer(15);//纹理的buffer
+    private final IntBuffer TextureName = GLBuffers.newDirectIntBuffer(Data.TextureNum);//纹理的buffer
 
     private float selectVer[]=new float[1*3*5];//选中的三角
     private Tri selectTri=new Tri("no Tri");
-    public Models.Model testModel = new Model(System.getProperty("user.dir") + "/src/stl/Twoman.stl");
-    private float frontVers[] = new float[testModel.Ts.tris.size() * 3 * 5];//修补孔洞的时候，数量有可能会超出这个范围
-    private float backVers[] = new float[testModel.Ts.tris.size() * 3 * 5];
-    private float deleteVers[] = new float[testModel.Ts.tris.size() * 3 * 5];
-    private float deleteVersSort[][] = new float[11][testModel.Ts.tris.size() * 3 * 5];
-    private float hole_Tri[][] = new float[10][testModel.Ts.tris.size() * 3 * 5];
+    public Models.Model testModel=new Model();
+   // public Models.Model testModel = new Model(System.getProperty("user.dir") + "/src/stl/Twoman.stl");
+    private float frontVers[];
+    private float backVers[];
+    private float deleteVers[];
+    private float deleteVersSort[][];
+    private float hole_Tri[][];
 
     private ArrayList<Float> FrontVers=new ArrayList<Float>();//改用List动态存储，再临时改成数组
     private ArrayList<Float> BackVers=new ArrayList<Float>();
+    private ArrayList<Float> Hole_Vers=new ArrayList<Float>();
     private HashMap<Integer,ArrayList<Float>>HoleVers=new HashMap<Integer, ArrayList<Float>>();
 
     private int program;
@@ -56,6 +60,15 @@ public class MyListener implements GLEventListener {
     boolean selectChange=false;
 
     int time=0;
+
+    public MyListener(Model model){
+        this.testModel=model;
+        frontVers = new float[testModel.Ts.tris.size() * 3 * 5];//修补孔洞的时候，数量有可能会超出这个范围
+        backVers= new float[testModel.Ts.tris.size() * 3 * 5];
+         deleteVers = new float[testModel.Ts.tris.size() * 3 * 5];
+        deleteVersSort = new float[11][testModel.Ts.tris.size() * 3 * 5];
+        hole_Tri = new float[10][testModel.Ts.tris.size() * 3 * 5];
+    }
 
     @Override
     public void init(GLAutoDrawable glAutoDrawable) {
@@ -80,6 +93,7 @@ public class MyListener implements GLEventListener {
         //initDeleteVers();
         initSelect(selectTri);
         initHoleEdge();
+        initHoleVers();
         initBuffer(gl);
     }
 
@@ -91,8 +105,34 @@ public class MyListener implements GLEventListener {
     @Override
     public void display(GLAutoDrawable glAutoDrawable) {
         GL3 gl = glAutoDrawable.getGL().getGL3();//获取上下文
-        gl.glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);//清楚颜色和深度缓存
+        gl.glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);//清除颜色和深度缓存
+        gl.glEnable(GL_CULL_FACE);//剔除背面
+        gl.glEnable(GL_POINT_SIZE);
+        gl.glEnable(GL_POINTS);
+        gl.glEnable(GL_VERTEX_ARRAY_POINTER);
+        gl.glPointSize(8.0f);//改变绘制点的大小
 
+        currentTime = System.currentTimeMillis();
+        deltaTime = currentTime - lastTime;
+        camera.setSpeed(deltaTime * 0.015f);
+        lastTime = currentTime;
+
+        gl.glUseProgram(program);
+        view = camera.getViewMatrix();
+        //传入矩阵
+        gl.glUniformMatrix4fv(gl.glGetUniformLocation(program, "model"), 1, false, model.toFa_(), 0);
+        gl.glUniformMatrix4fv(gl.glGetUniformLocation(program, "view"), 1, false, view.toFa_(), 0);
+        gl.glUniformMatrix4fv(gl.glGetUniformLocation(program, "proj"), 1, false, proj.toFa_(), 0);
+
+
+
+        displayModel(gl);//绘制模型
+        displayPlaneFitting(gl);//绘制平面拟合
+
+
+    }
+
+    public void displayModel(GL3 gl){
         if (startDelete) {
             System.out.println("delete");
             if (!testModel.Ts.tris.isEmpty() && testModel.deleteTs.tris.isEmpty() && testModel.Ts.tris.containsKey(selectTri.getTag())) {
@@ -110,23 +150,9 @@ public class MyListener implements GLEventListener {
             startRepair = false;
         }
         if(selectChange){
-        initModel(gl);
-        selectChange=false;
+            initModel(gl);
+            selectChange=false;
         }
-        //System.out.println(time++);
-        currentTime = System.currentTimeMillis();
-        deltaTime = currentTime - lastTime;
-        camera.setSpeed(deltaTime * 0.015f);
-        lastTime = currentTime;
-
-        gl.glUseProgram(program);
-        view = camera.getViewMatrix();
-        //传入矩阵
-        gl.glUniformMatrix4fv(gl.glGetUniformLocation(program, "model"), 1, false, model.toFa_(), 0);
-        gl.glUniformMatrix4fv(gl.glGetUniformLocation(program, "view"), 1, false, view.toFa_(), 0);
-        gl.glUniformMatrix4fv(gl.glGetUniformLocation(program, "proj"), 1, false, proj.toFa_(), 0);
-
-        gl.glEnable(GL_CULL_FACE);//剔除背面
 
         for (int i = 11; i < 13; i++) {
             Draw(i, testModel.Ts.tris.size(), gl);//11 12分别为绘制正面和背面
@@ -142,6 +168,10 @@ public class MyListener implements GLEventListener {
         Draw(24,14,1,gl);
     }
 
+    public void displayPlaneFitting(GL3 gl){
+        DrawPoint(25,25,testModel.Hole_Vers.vertexs.size(),gl);
+    }
+
     private void Draw(int i, int size, GL3 gl) {
         Draw(i, i, size, gl);
     }
@@ -152,6 +182,13 @@ public class MyListener implements GLEventListener {
         gl.glUniform1i(gl.glGetUniformLocation(program, "ourTexture"), TextureNum);
         gl.glBindVertexArray(ArrayName.get(VertexNum));
         gl.glDrawArrays(GL_TRIANGLES, 0, size * 3);
+    }
+    private void DrawPoint(int VertexNum,int TextureNum,int size,GL3 gl){
+        gl.glActiveTexture(GL_TEXTURE0 + TextureNum);
+        gl.glBindTexture(GL_TEXTURE_2D, TextureName.get(TextureNum));
+        gl.glUniform1i(gl.glGetUniformLocation(program, "ourTexture"), TextureNum);
+        gl.glBindVertexArray(ArrayName.get(VertexNum));
+        gl.glDrawArrays(GL_POINTS, 0, size * 2);
     }
 
     @Override
@@ -173,6 +210,7 @@ public class MyListener implements GLEventListener {
             initBuffer(i, HoleVers.get(i-14), gl);
         }
         initBuffer(24,selectVer,gl);
+        initBuffer(25,Hole_Vers,gl);//第一阶段拟合点展示
     }
     private void initBuffer(int num,ArrayList<Float> VersList,GL3 gl) {
         if (VersList == null) return;
@@ -211,6 +249,7 @@ public class MyListener implements GLEventListener {
         gl.glBindVertexArray(0);
         gl.glBindBuffer(GL2.GL_ARRAY_BUFFER, 0);
     }
+
 
     private void initShader(GL3 gl) {
         String[] vertexSource = new String[1];
@@ -280,7 +319,7 @@ public class MyListener implements GLEventListener {
 
     private void initTexture(GL3 gl) {
         try {
-            gl.glGenTextures(15, TextureName);//生成纹理
+            gl.glGenTextures(Data.TextureNum, TextureName);//生成纹理
             for (int i = 0; i < 10; i++) {
                 initTexture(i, "/src/image/numberTexture/SORT-" + String.valueOf(i) + ".png", "png", gl);
             }
@@ -289,6 +328,7 @@ public class MyListener implements GLEventListener {
             initTexture(12, "/src/image/blue.jpg", "jpg", gl);
             initTexture(13, "/src/image/temp1.jpg", "jpg", gl);
             initTexture(14, "/src/image/wo.jpg", "jpg", gl);
+            initTexture(25, "/src/image/line.jpg", "jpg", gl);
             gl.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
             gl.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
             gl.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -460,7 +500,25 @@ public class MyListener implements GLEventListener {
         }
     }
 
-    private void initHoleEfgeSort(int num) {
+    private void initHoleVers(){
+        this.Hole_Vers.clear();
+        double []a= MyUtil.planeFitting(this.testModel.Hole_Vers);
+
+        for(Vertex v:this.testModel.Hole_Vers.vertexs.values()){
+            this.Hole_Vers.add((float)((v.getX()-70)*0.05));
+            this.Hole_Vers.add((float)((v.getY()-70)*0.05));
+            this.Hole_Vers.add((float)((v.getZ()-70)*0.05));
+            this.Hole_Vers.add(0.0f);
+            this.Hole_Vers.add(0.0f);
+            Vertex planeFittingPoint=MyUtil.getPlaneFittingPoint(a[0],a[1],a[2],v);
+            this.Hole_Vers.add((float)((planeFittingPoint.getX()-70)*0.05));
+            this.Hole_Vers.add((float)((planeFittingPoint.getY()-70)*0.05));
+            this.Hole_Vers.add((float)((planeFittingPoint.getZ()-70)*0.05));
+            this.Hole_Vers.add(1.0f);
+            this.Hole_Vers.add(0.0f);
+        }
+    }
+    private void initHoleEdgeSort(int num) {
         //ArrayList<Float> deleteV = new ArrayList<Float>();
         for (Tri tempT : testModel.sortHole_Tri[num].tris.values()) {
             HoleVers.get(num).add((float) ((tempT.getV0().getX() - 70) * 0.05));
@@ -562,5 +620,9 @@ public class MyListener implements GLEventListener {
         selectVer[12]=((float) ((tri.getV2().getZ() - 70) * 0.05));
         selectVer[13]=(0.5f);
         selectVer[14]=(1.0f);
+    }
+
+    private void initPlaneFitting(){
+
     }
 }

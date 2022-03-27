@@ -1,3 +1,4 @@
+import Models.Model;
 import Models.Tri;
 import Models.Tris;
 import com.jogamp.opengl.awt.GLCanvas;
@@ -15,12 +16,13 @@ import java.awt.*;
 import java.awt.event.*;
 
 public class SwingFrame {
+    public Models.Model testModel = new Model(System.getProperty("user.dir") + "/src/stl/Twoman.stl");
     public void init(){
         //运行GUI代码在事件分发线程以保证线程安全
         SwingUtilities.invokeLater(() -> {
             //创建OpenGL渲染画布
             GLCanvas canvas = new GLCanvas();
-            MyListener myListener = new MyListener();
+            MyListener myListener = new MyListener(testModel);
             canvas.addGLEventListener(myListener);
             //canvas.setPreferredSize(new Dimension(CANVAS_WIDTH, CANVAS_HEIGHT));
             canvas.setPreferredSize(new Dimension(1200, 900));
@@ -38,7 +40,7 @@ public class SwingFrame {
             DefaultTreeSelectionModel selectionModel=new DefaultTreeSelectionModel();
             selectionModel.setSelectionMode(DefaultTreeSelectionModel.SINGLE_TREE_SELECTION);
             //JList<JTree> TriTreeList=new JList<JTree>();
-            for(Tri tri:myListener.testModel.Ts.tris.values()){
+            for(Tri tri:testModel.Ts.tris.values()){
                 //创建DefaultMutableTreeNode对象代表结点
                 DefaultMutableTreeNode TriRoot=this.initTriTree(tri);
                 Root.add(TriRoot);
@@ -60,9 +62,15 @@ public class SwingFrame {
             //TreeBox.add(new JScrollPane((TriTree)));
             //TriTreePanel.setLayout(new BoxLayout(TriTreePanel,BoxLayout.Y_AXIS));
 
-
+            JButton button=new JButton("切换");
+            JPanel jPanel=new JPanel();
+            jPanel.add(TriTree);
+            jPanel.add(button);
+            JSplitPane BandTJSP=new JSplitPane(JSplitPane.VERTICAL_SPLIT,new JScrollPane(TriTree),button);
+            BandTJSP.setOneTouchExpandable(true);//一触即展
+            BandTJSP.setContinuousLayout(true);//连续布局
             //设置分隔条
-            JSplitPane MainJSP=new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,canvas,new JScrollPane(TriTree));//左边为画布，右边为功能区
+            JSplitPane MainJSP=new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,canvas,BandTJSP);//左边为画布，右边为功能区
             MainJSP.setOneTouchExpandable(true);//一触即展
             MainJSP.setContinuousLayout(true);//连续布局
             MainJSP.setDividerLocation(1200);//设置初始位置
