@@ -40,6 +40,7 @@ public class MyListener implements GLEventListener {
     private ArrayList<Float> Hole_Vers=new ArrayList<Float>();
     private ArrayList<Float> Hole_Plane_Vers=new ArrayList<Float>();
     private ArrayList<Float> Line=new ArrayList<Float>();
+    private ArrayList<Float> PLANE=new ArrayList<Float>();
     private HashMap<Integer,ArrayList<Float>>HoleVers=new HashMap<Integer, ArrayList<Float>>();
 
     private int program;
@@ -106,10 +107,11 @@ public class MyListener implements GLEventListener {
         GL3 gl = glAutoDrawable.getGL().getGL3();//获取上下文
         gl.glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);//清除颜色和深度缓存
         gl.glEnable(GL_CULL_FACE);//剔除背面
+
         gl.glEnable(GL_POINT_SIZE);
         gl.glEnable(GL_POINTS);
         gl.glEnable(GL_VERTEX_ARRAY_POINTER);
-        gl.glPointSize(8.0f);//改变绘制点的大小
+        gl.glPointSize(15.0f);//改变绘制点的大小
         gl.glLineWidth(5.f);
 
         currentTime = System.currentTimeMillis();
@@ -148,8 +150,6 @@ public class MyListener implements GLEventListener {
 
         //displayModel(gl);//绘制模型
         displayPlaneFitting(gl);//绘制平面拟合
-
-
     }
 
     public void displayModel(GL3 gl){
@@ -170,6 +170,7 @@ public class MyListener implements GLEventListener {
     }
 
     public void displayPlaneFitting(GL3 gl){
+        Draw(28,testModel.Hole_Vertexs.VERTEXSs.size()*2,gl);
         DrawPoint(25,25,testModel.Hole_Vers.vertexs.size(),gl);
         DrawPoint(26,26,testModel.Hole_Vers.vertexs.size(),gl);
         DrawLine(27,27,testModel.Hole_Vers.vertexs.size(),gl);
@@ -223,6 +224,7 @@ public class MyListener implements GLEventListener {
         initBuffer(25,Hole_Vers,gl);//第一阶段拟合点展示
         initBuffer(26,Hole_Plane_Vers,gl);
         initBuffer(27,Line,gl);
+        initBuffer(28,PLANE,gl);
     }
     private void initBuffer(int num,ArrayList<Float> VersList,GL3 gl) {
         if (VersList == null) return;
@@ -343,6 +345,7 @@ public class MyListener implements GLEventListener {
             initTexture(25, "/src/image/line2.png", "png", gl);
             initTexture(26, "/src/image/line.jpg", "jpg", gl);
             initTexture(27, "/src/image/temp1.jpg", "jpg", gl);
+            initTexture(28, "/src/image/temp2.jpg", "jpg", gl);
             gl.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
             gl.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
             gl.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -518,7 +521,43 @@ public class MyListener implements GLEventListener {
         this.Hole_Vers.clear();
         this.Hole_Plane_Vers.clear();
         this.Line.clear();
+        this.PLANE.clear();
         for(Vertexs Vs:this.testModel.Hole_Vertexs.VERTEXSs.values()){
+            this.PLANE.add((float)((Vs.LeftUp.getX()-70)*0.05));
+            this.PLANE.add((float)((Vs.LeftUp.getY()-70)*0.05));
+            this.PLANE.add((float)((Vs.LeftUp.getZ()-70)*0.05));
+            this.PLANE.add(0.0f);
+            this.PLANE.add(1.0f);
+
+            this.PLANE.add((float)((Vs.LeftDown.getX()-70)*0.05));
+            this.PLANE.add((float)((Vs.LeftDown.getY()-70)*0.05));
+            this.PLANE.add((float)((Vs.LeftDown.getZ()-70)*0.05));
+            this.PLANE.add(0.0f);
+            this.PLANE.add(0.0f);
+
+            this.PLANE.add((float)((Vs.RightDown.getX()-70)*0.05));
+            this.PLANE.add((float)((Vs.RightDown.getY()-70)*0.05));
+            this.PLANE.add((float)((Vs.RightDown.getZ()-70)*0.05));
+            this.PLANE.add(1.0f);
+            this.PLANE.add(0.0f);
+
+            this.PLANE.add((float)((Vs.LeftUp.getX()-70)*0.05));
+            this.PLANE.add((float)((Vs.LeftUp.getY()-70)*0.05));
+            this.PLANE.add((float)((Vs.LeftUp.getZ()-70)*0.05));
+            this.PLANE.add(0.0f);
+            this.PLANE.add(1.0f);
+
+            this.PLANE.add((float)((Vs.RightDown.getX()-70)*0.05));
+            this.PLANE.add((float)((Vs.RightDown.getY()-70)*0.05));
+            this.PLANE.add((float)((Vs.RightDown.getZ()-70)*0.05));
+            this.PLANE.add(1.0f);
+            this.PLANE.add(0.0f);
+
+            this.PLANE.add((float)((Vs.RightUp.getX()-70)*0.05));
+            this.PLANE.add((float)((Vs.RightUp.getY()-70)*0.05));
+            this.PLANE.add((float)((Vs.RightUp.getZ()-70)*0.05));
+            this.PLANE.add(1.0f);
+            this.PLANE.add(1.0f);
             for(Vertex v:Vs.vertexs.values()){
                 this.Hole_Vers.add((float)((v.getX()-70)*0.05));
                 this.Hole_Vers.add((float)((v.getY()-70)*0.05));

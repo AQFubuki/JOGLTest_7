@@ -68,6 +68,10 @@ public class MyUtil {
         double Z = temp.getX() * a0 + temp.getY() * a1 + a2;
         return Z;
     }
+    public static double setPlaneFittingPoint(double a0,double a1,double a2,double X,double Y){
+        double Z = X * a0 + Y * a1 + a2;
+        return Z;
+    }
 
     public static double getDeter3(double a11, double a12, double a13,
                                    double a21, double a22, double a23,

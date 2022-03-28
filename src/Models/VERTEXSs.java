@@ -25,10 +25,8 @@ public class VERTEXSs {
 
     public void setPlaneFittng(){
         for(Vertexs Vs:this.VERTEXSs.values()){
-            double a[]= MyUtil.planeFitting(Vs);
-            for(Vertex v:Vs.vertexs.values()){
-                v.setPLANE_FITTING_Z(MyUtil.setPlaneFittingPoint(a[0],a[1],a[2],v));
-            }
+            Vs.setPlaneFitting();
+            //Vs.printX();
         }
     }
 }
