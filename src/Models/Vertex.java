@@ -6,6 +6,10 @@ public class Vertex {
     protected double X;
     protected double Y;
     protected double Z;
+    protected double CIRCLE_X;
+    protected double CIRCLE_Y;
+    protected double CIRCLE_Z;
+    protected double PLANE_FITTING_Z;
     protected String tag;
     protected Vertexs nearVs = new Vertexs();
     protected Edges nearEs = new Edges();
@@ -18,6 +22,10 @@ public class Vertex {
         this.X = X;
         this.Y = Y;
         this.Z = Z;
+        this.CIRCLE_X = X;
+        this.CIRCLE_Y = Y;
+        this.CIRCLE_Z = Z;
+        this.PLANE_FITTING_Z =Z;
         this.tag = tag;
     }
 
@@ -29,6 +37,10 @@ public class Vertex {
         this.X = X;
         this.Y = Y;
         this.Z = Z;
+        this.CIRCLE_X = X;
+        this.CIRCLE_Y = Y;
+        this.CIRCLE_Z = Z;
+        this.PLANE_FITTING_Z =Z;
         this.setT();
     }
 
@@ -152,6 +164,12 @@ public class Vertex {
         dMun = Double.parseDouble(sNum);
         this.setZ(dMun);
 
+    }
+    public void setPLANE_FITTING_Z(double Z){
+        this.PLANE_FITTING_Z=Z;
+    }
+    public double getPLANE_FITTING_Z(){
+        return this.PLANE_FITTING_Z;
     }
 
     public void printnearTris(){

@@ -25,6 +25,7 @@ public class Model {
     public Edges Hole_Edge = new Edges();
     public EDGESs Hole_Edges = new EDGESs();
     public Vertexs Hole_Vers=new Vertexs();
+    public VERTEXSs Hole_Vertexs=new VERTEXSs();
 
     public Model() {
     }
@@ -373,6 +374,7 @@ public class Model {
         }
         this.Hole_Edges.setEDGESs(this.Hole_Edge);
         this.Hole_Tris.setTRISs(this.Hole_Edges, this.Hole_Tri);
+        this.Hole_Vertexs.setVERTEXSs(this.Hole_Edges);
         this.setSortHole_Tri();
     }
 

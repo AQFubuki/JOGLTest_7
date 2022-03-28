@@ -1,7 +1,4 @@
-import Models.Model;
-import Models.Tri;
-import Models.Tris;
-import Models.Vertex;
+import Models.*;
 import Utility.MyUtil;
 import com.jogamp.opengl.*;
 import com.jogamp.opengl.glu.GLU;
@@ -41,6 +38,8 @@ public class MyListener implements GLEventListener {
     private ArrayList<Float> FrontVers=new ArrayList<Float>();//改用List动态存储，再临时改成数组
     private ArrayList<Float> BackVers=new ArrayList<Float>();
     private ArrayList<Float> Hole_Vers=new ArrayList<Float>();
+    private ArrayList<Float> Hole_Plane_Vers=new ArrayList<Float>();
+    private ArrayList<Float> Line=new ArrayList<Float>();
     private HashMap<Integer,ArrayList<Float>>HoleVers=new HashMap<Integer, ArrayList<Float>>();
 
     private int program;
@@ -111,6 +110,7 @@ public class MyListener implements GLEventListener {
         gl.glEnable(GL_POINTS);
         gl.glEnable(GL_VERTEX_ARRAY_POINTER);
         gl.glPointSize(8.0f);//改变绘制点的大小
+        gl.glLineWidth(5.f);
 
         currentTime = System.currentTimeMillis();
         deltaTime = currentTime - lastTime;
@@ -125,14 +125,6 @@ public class MyListener implements GLEventListener {
         gl.glUniformMatrix4fv(gl.glGetUniformLocation(program, "proj"), 1, false, proj.toFa_(), 0);
 
 
-
-        displayModel(gl);//绘制模型
-        displayPlaneFitting(gl);//绘制平面拟合
-
-
-    }
-
-    public void displayModel(GL3 gl){
         if (startDelete) {
             System.out.println("delete");
             if (!testModel.Ts.tris.isEmpty() && testModel.deleteTs.tris.isEmpty() && testModel.Ts.tris.containsKey(selectTri.getTag())) {
@@ -154,6 +146,15 @@ public class MyListener implements GLEventListener {
             selectChange=false;
         }
 
+        //displayModel(gl);//绘制模型
+        displayPlaneFitting(gl);//绘制平面拟合
+
+
+    }
+
+    public void displayModel(GL3 gl){
+
+
         for (int i = 11; i < 13; i++) {
             Draw(i, testModel.Ts.tris.size(), gl);//11 12分别为绘制正面和背面
         }
@@ -170,6 +171,8 @@ public class MyListener implements GLEventListener {
 
     public void displayPlaneFitting(GL3 gl){
         DrawPoint(25,25,testModel.Hole_Vers.vertexs.size(),gl);
+        DrawPoint(26,26,testModel.Hole_Vers.vertexs.size(),gl);
+        DrawLine(27,27,testModel.Hole_Vers.vertexs.size(),gl);
     }
 
     private void Draw(int i, int size, GL3 gl) {
@@ -188,7 +191,14 @@ public class MyListener implements GLEventListener {
         gl.glBindTexture(GL_TEXTURE_2D, TextureName.get(TextureNum));
         gl.glUniform1i(gl.glGetUniformLocation(program, "ourTexture"), TextureNum);
         gl.glBindVertexArray(ArrayName.get(VertexNum));
-        gl.glDrawArrays(GL_POINTS, 0, size * 2);
+        gl.glDrawArrays(GL_POINTS, 0, size);
+    }
+    private void DrawLine(int VertexNum,int TextureNum,int size,GL3 gl){
+        gl.glActiveTexture(GL_TEXTURE0 + TextureNum);
+        gl.glBindTexture(GL_TEXTURE_2D, TextureName.get(TextureNum));
+        gl.glUniform1i(gl.glGetUniformLocation(program, "ourTexture"), TextureNum);
+        gl.glBindVertexArray(ArrayName.get(VertexNum));
+        gl.glDrawArrays(GL_LINES, 0, size*2);
     }
 
     @Override
@@ -211,6 +221,8 @@ public class MyListener implements GLEventListener {
         }
         initBuffer(24,selectVer,gl);
         initBuffer(25,Hole_Vers,gl);//第一阶段拟合点展示
+        initBuffer(26,Hole_Plane_Vers,gl);
+        initBuffer(27,Line,gl);
     }
     private void initBuffer(int num,ArrayList<Float> VersList,GL3 gl) {
         if (VersList == null) return;
@@ -324,11 +336,13 @@ public class MyListener implements GLEventListener {
                 initTexture(i, "/src/image/numberTexture/SORT-" + String.valueOf(i) + ".png", "png", gl);
             }
             initTexture(10, "/src/image/temp0.jpg", "jpg", gl);
-            initTexture(11, "/src/image/pink.jpg", "jpg", gl);
-            initTexture(12, "/src/image/blue.jpg", "jpg", gl);
+            initTexture(11, "/src/image/blue.jpg", "jpg", gl);
+            initTexture(12, "/src/image/pink.jpg", "jpg", gl);
             initTexture(13, "/src/image/temp1.jpg", "jpg", gl);
             initTexture(14, "/src/image/wo.jpg", "jpg", gl);
-            initTexture(25, "/src/image/line.jpg", "jpg", gl);
+            initTexture(25, "/src/image/line2.png", "png", gl);
+            initTexture(26, "/src/image/line.jpg", "jpg", gl);
+            initTexture(27, "/src/image/temp1.jpg", "jpg", gl);
             gl.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
             gl.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
             gl.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -502,7 +516,36 @@ public class MyListener implements GLEventListener {
 
     private void initHoleVers(){
         this.Hole_Vers.clear();
-        double []a= MyUtil.planeFitting(this.testModel.Hole_Vers);
+        this.Hole_Plane_Vers.clear();
+        this.Line.clear();
+        for(Vertexs Vs:this.testModel.Hole_Vertexs.VERTEXSs.values()){
+            for(Vertex v:Vs.vertexs.values()){
+                this.Hole_Vers.add((float)((v.getX()-70)*0.05));
+                this.Hole_Vers.add((float)((v.getY()-70)*0.05));
+                this.Hole_Vers.add((float)((v.getZ()-70)*0.05));
+                this.Hole_Vers.add(0.0f);
+                this.Hole_Vers.add(0.0f);
+
+                this.Hole_Plane_Vers.add((float)((v.getX()-70)*0.05));
+                this.Hole_Plane_Vers.add((float)((v.getY()-70)*0.05));
+                this.Hole_Plane_Vers.add((float)((v.getPLANE_FITTING_Z()-70)*0.05));
+                this.Hole_Plane_Vers.add(1.0f);
+                this.Hole_Plane_Vers.add(0.0f);
+
+                this.Line.add((float)((v.getX()-70)*0.05));
+                this.Line.add((float)((v.getY()-70)*0.05));
+                this.Line.add((float)((v.getZ()-70)*0.05));
+                this.Line.add(0.0f);
+                this.Line.add(0.0f);
+
+                this.Line.add((float)((v.getX()-70)*0.05));
+                this.Line.add((float)((v.getY()-70)*0.05));
+                this.Line.add((float)((v.getPLANE_FITTING_Z()-70)*0.05));
+                this.Line.add(1.0f);
+                this.Line.add(0.0f);
+            }
+        }
+        /**double []a= MyUtil.planeFitting(this.testModel.Hole_Vers);
 
         for(Vertex v:this.testModel.Hole_Vers.vertexs.values()){
             this.Hole_Vers.add((float)((v.getX()-70)*0.05));
@@ -516,7 +559,7 @@ public class MyListener implements GLEventListener {
             this.Hole_Vers.add((float)((planeFittingPoint.getZ()-70)*0.05));
             this.Hole_Vers.add(1.0f);
             this.Hole_Vers.add(0.0f);
-        }
+        }**/
     }
     private void initHoleEdgeSort(int num) {
         //ArrayList<Float> deleteV = new ArrayList<Float>();
