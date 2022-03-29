@@ -48,8 +48,8 @@ public class Vertex {
         this.CIRCLE_Y = Y;
         this.CIRCLE_Z = Z;
         this.PLANE_FITTING_Z =Z;
-        this.Two_Dimension_X = X;
-        this.Two_Dimension_Y = Y;
+        this.Two_Dimension_X = 0.0f;
+        this.Two_Dimension_Y = 0.0f;
         this.setT();
     }
 

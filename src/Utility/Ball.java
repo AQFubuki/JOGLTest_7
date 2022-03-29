@@ -1,6 +1,9 @@
-package Models;
+package Utility;
 
-public class Ball extends Model{
+import Models.Model;
+import Models.Vertex;
+
+public class Ball extends Model {
     double Side_Length=1.0f;
     double Height=Math.sqrt(8)*Side_Length;
     public Ball(int layer){

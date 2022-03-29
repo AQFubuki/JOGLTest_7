@@ -61,10 +61,19 @@ public class MyUtil {
 
     }
     public static void getCircleFitting(Vertex v, double center_x, double center_y, double radius){
+        System.out.println("&&&&&&&&&&&&");
+        System.out.println(v.Two_Dimension_X+" "+v.Two_Dimension_Y);
+        System.out.println(center_x+" "+center_y+" "+radius);
+        System.out.println("&&&&&&&&&&&&");
         Vec2 center_v=new Vec2(v.Two_Dimension_X-center_x,v.Two_Dimension_Y-center_y);
         double rat=radius/center_v.length();
-        v.Two_Dimension_X*=rat;
-        v.Two_Dimension_Y*=rat;
+        v.Two_Dimension_X=rat*center_v.x+center_x;
+        v.Two_Dimension_Y=rat*center_v.y+center_y;
+        System.out.println("&&&&&&&&&&&&");
+        System.out.println(v.Two_Dimension_X+" "+v.Two_Dimension_Y);
+        System.out.println((v.Two_Dimension_X-center_x)*(v.Two_Dimension_X-center_x)
+        +(v.Two_Dimension_Y-center_y)*(v.Two_Dimension_Y-center_y)+" and "+radius*radius);
+        System.out.println("&&&&&&&&&&&&");
     }
 
     public static double[] planeFitting(Vertexs Vs) {

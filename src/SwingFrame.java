@@ -16,7 +16,7 @@ import java.awt.*;
 import java.awt.event.*;
 
 public class SwingFrame {
-    public Models.Model testModel = new Model(System.getProperty("user.dir") + "/src/stl/Twoman.stl");
+    public Models.Model testModel = new Model(System.getProperty("user.dir") + "/src/stl/4212duck.stl");
     public void init(){
         //运行GUI代码在事件分发线程以保证线程安全
         SwingUtilities.invokeLater(() -> {
@@ -62,11 +62,44 @@ public class SwingFrame {
             //TreeBox.add(new JScrollPane((TriTree)));
             //TriTreePanel.setLayout(new BoxLayout(TriTreePanel,BoxLayout.Y_AXIS));
 
-            JButton button=new JButton("切换");
+            JPanel boxPanel=new JPanel();
+            JCheckBox model=new JCheckBox("显示模型",true);
+            JCheckBox plane=new JCheckBox("显示平面拟合",false);
+            JCheckBox circle=new JCheckBox("显示圆拟合",false);
+            ActionListener modelListener=new AbstractAction() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    if(model.isSelected()){
+                        myListener.M=true;
+                    }
+                    if(!model.isSelected()){
+                        myListener.M=false;
+                    }
+                    if(plane.isSelected()){
+                        myListener.P=true;
+                    }
+                    if(!plane.isSelected()){
+                        myListener.P=false;
+                    }
+                    if(circle.isSelected()){
+                        myListener.C=true;
+                    }
+                    if(!circle.isSelected()){
+                        myListener.C=false;
+                    }
+                }
+            };
+            model.addActionListener(modelListener);
+            plane.addActionListener(modelListener);
+            circle.addActionListener(modelListener);
+            boxPanel.add(model);
+            boxPanel.add(plane);
+            boxPanel.add(circle);
+            //JButton button=new JButton("切换");
             JPanel jPanel=new JPanel();
-            jPanel.add(TriTree);
-            jPanel.add(button);
-            JSplitPane BandTJSP=new JSplitPane(JSplitPane.VERTICAL_SPLIT,new JScrollPane(TriTree),button);
+            //jPanel.add(TriTree);
+            //jPanel.add(boxPanel);
+            JSplitPane BandTJSP=new JSplitPane(JSplitPane.VERTICAL_SPLIT,new JScrollPane(TriTree),boxPanel);
             BandTJSP.setOneTouchExpandable(true);//一触即展
             BandTJSP.setContinuousLayout(true);//连续布局
             //设置分隔条

@@ -69,21 +69,44 @@ public class Vertexs {
         }
     }
     public void changeDimensionTo2D(){
+        //System.out.println("ru");
+        changeDimensionTo2D(RightUp);
+        //System.out.println("rd");
+        changeDimensionTo2D(RightDown);
+        //System.out.println("lu");
+        changeDimensionTo2D(LeftUp);
+        //System.out.println("ld");
+        changeDimensionTo2D(LeftDown);
+        //System.out.println("pppppppp");
         for(Vertex v:this.vertexs.values()){
-            v.Two_Dimension_X=this.getDistance(LeftUp,LeftDown,v);
+            changeDimensionTo2D(v);
+        }
+
+    }
+    public void changeDimensionTo2D(Vertex v){
+            v.Two_Dimension_X=this.getDistance(LeftDown,LeftUp,v);
             v.Two_Dimension_Y=this.getDistance(LeftDown,RightDown,v);
         }
-        RightUp.Two_Dimension_X=this.getDistance(LeftUp,LeftDown,RightUp);
-        RightUp.Two_Dimension_Y=this.getDistance(LeftDown,RightDown,RightUp);
 
-        RightDown.Two_Dimension_X=this.getDistance(LeftUp,LeftDown,RightDown);
-        RightDown.Two_Dimension_Y=this.getDistance(LeftDown,RightDown,RightDown);
+    public double getDistance(Vertex sv,Vertex ev,Vertex v){
+        Vec3 SV_EV=new Vec3(ev.getX()-sv.getX(),ev.getY()-sv.getY(),
+                ev.getZ()-sv.getZ());
+        Vec3 SV_V=new Vec3(v.getX()-sv.getX(),v.getY()-sv.getY(),
+                v.getPLANE_FITTING_Z()-sv.getPLANE_FITTING_Z());
 
-        LeftDown.Two_Dimension_X=this.getDistance(LeftUp,LeftDown,LeftDown);
-        LeftDown.Two_Dimension_Y=this.getDistance(LeftDown,RightDown,LeftDown);
-
-        LeftUp.Two_Dimension_X=this.getDistance(LeftUp,LeftDown,LeftUp);
-        LeftUp.Two_Dimension_Y=this.getDistance(LeftDown,RightDown,LeftUp);
+        Vec3 res=new Vec3();
+        SV_EV.cross(SV_V,res);
+        double res_L=res.length();
+        double SV_EV_L=SV_EV.length();
+        //System.out.println("**************");
+        //System.out.println(SV_EV.x+" "+SV_EV.y+" "+SV_EV.z);
+        //System.out.println(SV_V.x+" "+SV_V.y+" "+SV_V.z);
+        //System.out.println(res_L+" "+SV_EV_L+" "+res_L/SV_EV_L);
+        //System.out.println("**************");
+        if(abs(SV_EV_L)<0.000001){
+            return 0.0f;
+        }
+        return res_L/SV_EV_L;
     }
     public void changeDimensionTo3D(){
         //z=a0x+a1y+a2
@@ -95,6 +118,7 @@ public class Vertexs {
                 RightDown.getZ()-LeftDown.getZ());
         double x_length=RightDown.Two_Dimension_X-LeftDown.Two_Dimension_X;
         double y_length=LeftUp.Two_Dimension_Y-LeftDown.Two_Dimension_Y;
+        System.out.println(x_length+"  xxxx  "+y_length);
         for(Vertex v:this.vertexs.values()){
             double rat_x=v.Two_Dimension_X/x_length;
             double rat_y=v.Two_Dimension_Y/y_length;
@@ -104,20 +128,7 @@ public class Vertexs {
         }
     }
 
-    public double getDistance(Vertex sv,Vertex ev,Vertex v){
-        Vec3 SV_EV=new Vec3(ev.getX()-sv.getX(),ev.getY()-sv.getY(),
-                ev.getPLANE_FITTING_Z()-sv.getPLANE_FITTING_Z());
-        Vec3 SV_V=new Vec3(v.getX()-sv.getX(),v.getY()-sv.getY(),
-                v.getPLANE_FITTING_Z()-sv.getPLANE_FITTING_Z());
-        Vec3 res=new Vec3();
-        SV_EV.cross(SV_V,res);
-        double res_L=res.length();
-        double SV_EV_L=SV_EV.length();
-        if(abs(SV_EV_L)<0.000001){
-            return 0.0f;
-        }
-        return res_L/SV_EV_L;
-    }
+
 
     public void CircleFitting(){
 

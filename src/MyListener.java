@@ -59,6 +59,9 @@ public class MyListener implements GLEventListener {
     boolean startDelete = false;
     boolean startRepair = false;
     boolean selectChange=false;
+    boolean M=true;
+    boolean P=false;
+    boolean C=false;
 
     int time=0;
 
@@ -148,9 +151,16 @@ public class MyListener implements GLEventListener {
             initModel(gl);
             selectChange=false;
         }
+        if(M){
+            displayModel(gl);//绘制模型
+        }
+        if(P){
+            displayPlaneFitting(gl);//绘制平面拟合
+        }
+        if(C){
+            displayCircleFitting(gl);
+        }
 
-        displayModel(gl);//绘制模型
-        displayPlaneFitting(gl);//绘制平面拟合
     }
 
     public void displayModel(GL3 gl){
@@ -175,6 +185,13 @@ public class MyListener implements GLEventListener {
         DrawPoint(25,25,testModel.Hole_Vers.vertexs.size(),gl);
         DrawPoint(26,26,testModel.Hole_Vers.vertexs.size(),gl);
         DrawLine(27,27,testModel.Hole_Vers.vertexs.size(),gl);
+        //DrawPoint(29,29,testModel.Hole_Vers.vertexs.size(),gl);
+    }
+    public void displayCircleFitting(GL3 gl){
+        Draw(28,testModel.Hole_Vertexs.VERTEXSs.size()*2,gl);
+        //DrawPoint(25,25,testModel.Hole_Vers.vertexs.size(),gl);
+        DrawPoint(26,26,testModel.Hole_Vers.vertexs.size(),gl);
+        //DrawLine(27,27,testModel.Hole_Vers.vertexs.size(),gl);
         DrawPoint(29,29,testModel.Hole_Vers.vertexs.size(),gl);
     }
 
@@ -348,7 +365,7 @@ public class MyListener implements GLEventListener {
             initTexture(25, "/src/image/line2.png", "png", gl);
             initTexture(26, "/src/image/line.jpg", "jpg", gl);
             initTexture(27, "/src/image/temp1.jpg", "jpg", gl);
-            initTexture(28, "/src/image/temp2.jpg", "jpg", gl);
+            initTexture(28, "/src/image/black.png", "png", gl);
             initTexture(29, "/src/image/CIRCLE.png", "png", gl);
             gl.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
             gl.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
@@ -528,9 +545,9 @@ public class MyListener implements GLEventListener {
         this.PLANE.clear();
         this.CIRCLE.clear();
         for(Vertexs Vs:this.testModel.Hole_Vertexs.VERTEXSs.values()){
-            this.PLANE.add((float)((Vs.LeftUp.getX()-70)*0.05));
-            this.PLANE.add((float)((Vs.LeftUp.getY()-70)*0.05));
-            this.PLANE.add((float)((Vs.LeftUp.getZ()-70)*0.05));
+            this.PLANE.add((float)((Vs.RightDown.getX()-70)*0.05));
+            this.PLANE.add((float)((Vs.RightDown.getY()-70)*0.05));
+            this.PLANE.add((float)((Vs.RightDown.getZ()-70)*0.05));
             this.PLANE.add(0.0f);
             this.PLANE.add(1.0f);
 
@@ -540,6 +557,18 @@ public class MyListener implements GLEventListener {
             this.PLANE.add(0.0f);
             this.PLANE.add(0.0f);
 
+            this.PLANE.add((float)((Vs.LeftUp.getX()-70)*0.05));
+            this.PLANE.add((float)((Vs.LeftUp.getY()-70)*0.05));
+            this.PLANE.add((float)((Vs.LeftUp.getZ()-70)*0.05));
+            this.PLANE.add(1.0f);
+            this.PLANE.add(0.0f);
+
+            this.PLANE.add((float)((Vs.RightUp.getX()-70)*0.05));
+            this.PLANE.add((float)((Vs.RightUp.getY()-70)*0.05));
+            this.PLANE.add((float)((Vs.RightUp.getZ()-70)*0.05));
+            this.PLANE.add(0.0f);
+            this.PLANE.add(1.0f);
+
             this.PLANE.add((float)((Vs.RightDown.getX()-70)*0.05));
             this.PLANE.add((float)((Vs.RightDown.getY()-70)*0.05));
             this.PLANE.add((float)((Vs.RightDown.getZ()-70)*0.05));
@@ -549,18 +578,6 @@ public class MyListener implements GLEventListener {
             this.PLANE.add((float)((Vs.LeftUp.getX()-70)*0.05));
             this.PLANE.add((float)((Vs.LeftUp.getY()-70)*0.05));
             this.PLANE.add((float)((Vs.LeftUp.getZ()-70)*0.05));
-            this.PLANE.add(0.0f);
-            this.PLANE.add(1.0f);
-
-            this.PLANE.add((float)((Vs.RightDown.getX()-70)*0.05));
-            this.PLANE.add((float)((Vs.RightDown.getY()-70)*0.05));
-            this.PLANE.add((float)((Vs.RightDown.getZ()-70)*0.05));
-            this.PLANE.add(1.0f);
-            this.PLANE.add(0.0f);
-
-            this.PLANE.add((float)((Vs.RightUp.getX()-70)*0.05));
-            this.PLANE.add((float)((Vs.RightUp.getY()-70)*0.05));
-            this.PLANE.add((float)((Vs.RightUp.getZ()-70)*0.05));
             this.PLANE.add(1.0f);
             this.PLANE.add(1.0f);
             for(Vertex v:Vs.vertexs.values()){
