@@ -1,7 +1,5 @@
 package Models;
 
-import Utility.MyUtil;
-
 import java.util.HashMap;
 
 public class VERTEXSs {
@@ -25,7 +23,7 @@ public class VERTEXSs {
 
     public void setPlaneFittng(){
         for(Vertexs Vs:this.VERTEXSs.values()){
-            Vs.setPlaneFitting();
+            Vs.setFitting();
             //Vs.printX();
         }
     }

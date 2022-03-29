@@ -41,6 +41,7 @@ public class MyListener implements GLEventListener {
     private ArrayList<Float> Hole_Plane_Vers=new ArrayList<Float>();
     private ArrayList<Float> Line=new ArrayList<Float>();
     private ArrayList<Float> PLANE=new ArrayList<Float>();
+    private ArrayList<Float> CIRCLE=new ArrayList<Float>();
     private HashMap<Integer,ArrayList<Float>>HoleVers=new HashMap<Integer, ArrayList<Float>>();
 
     private int program;
@@ -148,7 +149,7 @@ public class MyListener implements GLEventListener {
             selectChange=false;
         }
 
-        //displayModel(gl);//绘制模型
+        displayModel(gl);//绘制模型
         displayPlaneFitting(gl);//绘制平面拟合
     }
 
@@ -174,6 +175,7 @@ public class MyListener implements GLEventListener {
         DrawPoint(25,25,testModel.Hole_Vers.vertexs.size(),gl);
         DrawPoint(26,26,testModel.Hole_Vers.vertexs.size(),gl);
         DrawLine(27,27,testModel.Hole_Vers.vertexs.size(),gl);
+        DrawPoint(29,29,testModel.Hole_Vers.vertexs.size(),gl);
     }
 
     private void Draw(int i, int size, GL3 gl) {
@@ -225,6 +227,7 @@ public class MyListener implements GLEventListener {
         initBuffer(26,Hole_Plane_Vers,gl);
         initBuffer(27,Line,gl);
         initBuffer(28,PLANE,gl);
+        initBuffer(29,CIRCLE,gl);
     }
     private void initBuffer(int num,ArrayList<Float> VersList,GL3 gl) {
         if (VersList == null) return;
@@ -346,6 +349,7 @@ public class MyListener implements GLEventListener {
             initTexture(26, "/src/image/line.jpg", "jpg", gl);
             initTexture(27, "/src/image/temp1.jpg", "jpg", gl);
             initTexture(28, "/src/image/temp2.jpg", "jpg", gl);
+            initTexture(29, "/src/image/CIRCLE.png", "png", gl);
             gl.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
             gl.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
             gl.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -522,6 +526,7 @@ public class MyListener implements GLEventListener {
         this.Hole_Plane_Vers.clear();
         this.Line.clear();
         this.PLANE.clear();
+        this.CIRCLE.clear();
         for(Vertexs Vs:this.testModel.Hole_Vertexs.VERTEXSs.values()){
             this.PLANE.add((float)((Vs.LeftUp.getX()-70)*0.05));
             this.PLANE.add((float)((Vs.LeftUp.getY()-70)*0.05));
@@ -570,6 +575,12 @@ public class MyListener implements GLEventListener {
                 this.Hole_Plane_Vers.add((float)((v.getPLANE_FITTING_Z()-70)*0.05));
                 this.Hole_Plane_Vers.add(1.0f);
                 this.Hole_Plane_Vers.add(0.0f);
+
+                this.CIRCLE.add((float)((v.CIRCLE_X-70)*0.05));
+                this.CIRCLE.add((float)((v.CIRCLE_Y-70)*0.05));
+                this.CIRCLE.add((float)((v.CIRCLE_Z-70)*0.05));
+                this.CIRCLE.add(0.0f);
+                this.CIRCLE.add(0.0f);
 
                 this.Line.add((float)((v.getX()-70)*0.05));
                 this.Line.add((float)((v.getY()-70)*0.05));

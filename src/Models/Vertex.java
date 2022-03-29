@@ -6,10 +6,15 @@ public class Vertex {
     protected double X;
     protected double Y;
     protected double Z;
-    protected double CIRCLE_X;
-    protected double CIRCLE_Y;
-    protected double CIRCLE_Z;
+
+    public double CIRCLE_X;
+    public double CIRCLE_Y;
+    public double CIRCLE_Z;
+
     protected double PLANE_FITTING_Z;
+
+    public double Two_Dimension_X;
+    public double Two_Dimension_Y;
     protected String tag;
     protected Vertexs nearVs = new Vertexs();
     protected Edges nearEs = new Edges();
@@ -25,7 +30,9 @@ public class Vertex {
         this.CIRCLE_X = X;
         this.CIRCLE_Y = Y;
         this.CIRCLE_Z = Z;
-        this.PLANE_FITTING_Z =Z;
+        this.PLANE_FITTING_Z = Z;
+        this.Two_Dimension_X = X;
+        this.Two_Dimension_Y = Y;
         this.tag = tag;
     }
 
@@ -41,6 +48,8 @@ public class Vertex {
         this.CIRCLE_Y = Y;
         this.CIRCLE_Z = Z;
         this.PLANE_FITTING_Z =Z;
+        this.Two_Dimension_X = X;
+        this.Two_Dimension_Y = Y;
         this.setT();
     }
 
