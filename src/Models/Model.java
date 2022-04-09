@@ -6,7 +6,7 @@ import java.util.Map;
 
 public class Model {
     public Vertexs Vs = new Vertexs();
-    protected Edges Es = new Edges();
+    public Edges Es = new Edges();
     public Tris Ts = new Tris();
 
     public Tris deleteTs = new Tris();

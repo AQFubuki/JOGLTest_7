@@ -130,7 +130,16 @@ public class Vertexs {
 
 
 
-    public void CircleFitting(){
-
+    public void setPlane(){
+        for(Vertex v:this.vertexs.values()){
+            v.setZ(v.getPLANE_FITTING_Z());
+        }
+    }
+    public void setCircle(){
+        for(Vertex v:this.vertexs.values()){
+            v.setX(v.CIRCLE_X);
+            v.setY(v.CIRCLE_Y);
+            v.setZ(v.CIRCLE_Z);
+        }
     }
 }

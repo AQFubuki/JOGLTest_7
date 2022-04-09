@@ -37,6 +37,9 @@ public class MyListener implements GLEventListener {
 
     private ArrayList<Float> FrontVers=new ArrayList<Float>();//改用List动态存储，再临时改成数组
     private ArrayList<Float> BackVers=new ArrayList<Float>();
+    private ArrayList<Float> edgeVers=new ArrayList<Float>();
+    private ArrayList<Float> verVers=new ArrayList<Float>();
+
     private ArrayList<Float> Hole_Vers=new ArrayList<Float>();
     private ArrayList<Float> Hole_Plane_Vers=new ArrayList<Float>();
     private ArrayList<Float> Line=new ArrayList<Float>();
@@ -59,6 +62,7 @@ public class MyListener implements GLEventListener {
     boolean startDelete = false;
     boolean startRepair = false;
     boolean selectChange=false;
+    boolean op=false;
     boolean M=true;
     boolean P=false;
     boolean C=false;
@@ -95,10 +99,42 @@ public class MyListener implements GLEventListener {
         initFrontVers();
         initBackVers();
         //initDeleteVers();
+        initedgeVers();
+        initverVers();
         initSelect(selectTri);
         initHoleEdge();
         initHoleVers();
         initBuffer(gl);
+    }
+
+    private void initverVers() {
+        this.verVers.clear();
+        for(Vertex v:this.testModel.Vs.vertexs.values()){
+            this.verVers.add((float)((v.getX()-70)*0.05));
+            this.verVers.add((float)((v.getY()-70)*0.05));
+            this.verVers.add((float)((v.getZ()-70)*0.05));
+            this.verVers.add(0.0f);
+            this.verVers.add(0.0f);
+        }
+    }
+
+    private void initedgeVers() {
+        this.edgeVers.clear();
+        for(Edge e:this.testModel.Es.edges.values()){
+            Vertex v1=e.getSv();
+            Vertex v2=e.getEv();
+            this.edgeVers.add((float)((v1.getX()-70)*0.05));
+            this.edgeVers.add((float)((v1.getY()-70)*0.05));
+            this.edgeVers.add((float)((v1.getZ()-70)*0.05));
+            this.edgeVers.add(0.0f);
+            this.edgeVers.add(0.0f);
+
+            this.edgeVers.add((float)((v2.getX()-70)*0.05));
+            this.edgeVers.add((float)((v2.getY()-70)*0.05));
+            this.edgeVers.add((float)((v2.getZ()-70)*0.05));
+            this.edgeVers.add(1.0f);
+            this.edgeVers.add(0.0f);
+        }
     }
 
     @Override
@@ -151,6 +187,11 @@ public class MyListener implements GLEventListener {
             initModel(gl);
             selectChange=false;
         }
+        if(op){
+            this.testModel.Hole_Vertexs.setPlaneFittng();
+            initModel(gl);
+            op=false;
+        }
         if(M){
             displayModel(gl);//绘制模型
         }
@@ -164,7 +205,8 @@ public class MyListener implements GLEventListener {
     }
 
     public void displayModel(GL3 gl){
-
+        gl.glPointSize(5.0f);//改变绘制点的大小
+        gl.glLineWidth(2.f);
 
         for (int i = 11; i < 13; i++) {
             Draw(i, testModel.Ts.tris.size(), gl);//11 12分别为绘制正面和背面
@@ -174,6 +216,8 @@ public class MyListener implements GLEventListener {
         //Draw(i,testModel.sortDeleteTS[i].tris.size(),gl);
         //}
         //Draw(13,testModel.deleteTs.tris.size(),gl);
+        DrawLine(31,28,testModel.Es.edges.size(),gl);
+        DrawPoint(30,30,testModel.Vs.vertexs.size(),gl);
         for (int i = 0; i < 10; i++) {
             Draw(i + 14, i, testModel.sortHole_Tri[i].tris.size(), gl);
         }
@@ -188,6 +232,8 @@ public class MyListener implements GLEventListener {
         //DrawPoint(29,29,testModel.Hole_Vers.vertexs.size(),gl);
     }
     public void displayCircleFitting(GL3 gl){
+        gl.glPointSize(15.0f);//改变绘制点的大小
+        gl.glLineWidth(5.f);
         Draw(28,testModel.Hole_Vertexs.VERTEXSs.size()*2,gl);
         //DrawPoint(25,25,testModel.Hole_Vers.vertexs.size(),gl);
         DrawPoint(26,26,testModel.Hole_Vers.vertexs.size(),gl);
@@ -245,6 +291,8 @@ public class MyListener implements GLEventListener {
         initBuffer(27,Line,gl);
         initBuffer(28,PLANE,gl);
         initBuffer(29,CIRCLE,gl);
+        initBuffer(30,verVers,gl);
+        initBuffer(31,edgeVers,gl);
     }
     private void initBuffer(int num,ArrayList<Float> VersList,GL3 gl) {
         if (VersList == null) return;
@@ -283,7 +331,6 @@ public class MyListener implements GLEventListener {
         gl.glBindVertexArray(0);
         gl.glBindBuffer(GL2.GL_ARRAY_BUFFER, 0);
     }
-
 
     private void initShader(GL3 gl) {
         String[] vertexSource = new String[1];
@@ -367,6 +414,8 @@ public class MyListener implements GLEventListener {
             initTexture(27, "/src/image/temp1.jpg", "jpg", gl);
             initTexture(28, "/src/image/black.png", "png", gl);
             initTexture(29, "/src/image/CIRCLE.png", "png", gl);
+            initTexture(30, "/src/image/point.png", "png", gl);
+            initTexture(31, "/src/image/nearline.png", "png", gl);
             gl.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
             gl.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
             gl.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -545,9 +594,9 @@ public class MyListener implements GLEventListener {
         this.PLANE.clear();
         this.CIRCLE.clear();
         for(Vertexs Vs:this.testModel.Hole_Vertexs.VERTEXSs.values()){
-            this.PLANE.add((float)((Vs.RightDown.getX()-70)*0.05));
-            this.PLANE.add((float)((Vs.RightDown.getY()-70)*0.05));
-            this.PLANE.add((float)((Vs.RightDown.getZ()-70)*0.05));
+            this.PLANE.add((float)((Vs.LeftUp.getX()-70)*0.05));
+            this.PLANE.add((float)((Vs.LeftUp.getY()-70)*0.05));
+            this.PLANE.add((float)((Vs.LeftUp.getZ()-70)*0.05));
             this.PLANE.add(0.0f);
             this.PLANE.add(1.0f);
 
@@ -557,18 +606,6 @@ public class MyListener implements GLEventListener {
             this.PLANE.add(0.0f);
             this.PLANE.add(0.0f);
 
-            this.PLANE.add((float)((Vs.LeftUp.getX()-70)*0.05));
-            this.PLANE.add((float)((Vs.LeftUp.getY()-70)*0.05));
-            this.PLANE.add((float)((Vs.LeftUp.getZ()-70)*0.05));
-            this.PLANE.add(1.0f);
-            this.PLANE.add(0.0f);
-
-            this.PLANE.add((float)((Vs.RightUp.getX()-70)*0.05));
-            this.PLANE.add((float)((Vs.RightUp.getY()-70)*0.05));
-            this.PLANE.add((float)((Vs.RightUp.getZ()-70)*0.05));
-            this.PLANE.add(0.0f);
-            this.PLANE.add(1.0f);
-
             this.PLANE.add((float)((Vs.RightDown.getX()-70)*0.05));
             this.PLANE.add((float)((Vs.RightDown.getY()-70)*0.05));
             this.PLANE.add((float)((Vs.RightDown.getZ()-70)*0.05));
@@ -578,6 +615,18 @@ public class MyListener implements GLEventListener {
             this.PLANE.add((float)((Vs.LeftUp.getX()-70)*0.05));
             this.PLANE.add((float)((Vs.LeftUp.getY()-70)*0.05));
             this.PLANE.add((float)((Vs.LeftUp.getZ()-70)*0.05));
+            this.PLANE.add(0.0f);
+            this.PLANE.add(1.0f);
+
+            this.PLANE.add((float)((Vs.RightDown.getX()-70)*0.05));
+            this.PLANE.add((float)((Vs.RightDown.getY()-70)*0.05));
+            this.PLANE.add((float)((Vs.RightDown.getZ()-70)*0.05));
+            this.PLANE.add(1.0f);
+            this.PLANE.add(0.0f);
+
+            this.PLANE.add((float)((Vs.RightUp.getX()-70)*0.05));
+            this.PLANE.add((float)((Vs.RightUp.getY()-70)*0.05));
+            this.PLANE.add((float)((Vs.RightUp.getZ()-70)*0.05));
             this.PLANE.add(1.0f);
             this.PLANE.add(1.0f);
             for(Vertex v:Vs.vertexs.values()){
@@ -692,6 +741,14 @@ public class MyListener implements GLEventListener {
         if (keyCode == KeyEvent.VK_X) {
             startRepair = true;
         }
+        if (keyCode == KeyEvent.VK_O) {
+            this.testModel.Hole_Vers.setPlane();
+            op=true;
+        }
+        if (keyCode == KeyEvent.VK_P) {
+            this.testModel.Hole_Vers.setCircle();
+            op=true;
+        }
     }
 
     public void selectChange(String name) {
@@ -730,9 +787,5 @@ public class MyListener implements GLEventListener {
         selectVer[12]=((float) ((tri.getV2().getZ() - 70) * 0.05));
         selectVer[13]=(0.5f);
         selectVer[14]=(1.0f);
-    }
-
-    private void initPlaneFitting(){
-
     }
 }

@@ -1,5 +1,5 @@
 public class Data {
-    public static int VAONum=30;
-    public static int VBONum=30;
-    public static int TextureNum=30;
+    public static int VAONum=35;
+    public static int VBONum=35;
+    public static int TextureNum=35;
 }
